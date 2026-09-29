@@ -1,0 +1,174 @@
+/* ============================================================
+   TTDYATRA Design Tokens — CSS Custom Properties
+   Primary source of truth for all design decisions
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Marcellus&family=Inter:wght@300;400;500;600;700&family=Mukta:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;500;600&display=swap');
+
+:root {
+  /* ── Sanctum Maroon ───────────────────────────────────── */
+  --color-maroon-900: #4A0E1C;
+  --color-maroon-800: #611626;
+  --color-maroon-700: #7A1E2D;
+  --color-maroon-600: #8C2A3B;
+  --color-maroon-500: #9A3648;
+  --color-maroon-100: #F3DEE2;
+  --color-maroon-050: #FAF0F2;
+
+  /* ── Temple Gold ─────────────────────────────────────── */
+  --color-gold-700: #A88318;
+  --color-gold-600: #C9A227;
+  --color-gold-400: #E3C05C;
+  --color-gold-200: #F2DEA2;
+  --color-gold-100: #F9EFD3;
+  --color-gold-tint: #FDF6E3;
+
+  /* ── Saffron ─────────────────────────────────────────── */
+  --color-saffron-600: #C96412;
+  --color-saffron-500: #E87A1D;
+  --color-saffron-100: #FCE8D8;
+
+  /* ── Background ──────────────────────────────────────── */
+  --color-ivory-bg: #FBF7EF;
+  --color-cream: #F8F2E4;
+  --color-sandal-200: #F3E7D3;
+  --color-sandal-100: #FAF3E6;
+  --color-paper: #FEFCF7;
+  --color-sand: #EDE4D3;
+
+  /* ── Text ─────────────────────────────────────────────── */
+  --color-neutral-900: #2B2320;
+  --color-neutral-700: #4A3F3A;
+  --color-neutral-600: #6B615C;
+  --color-neutral-400: #9C8F88;
+  --color-neutral-300: #D8CBB8;
+  --color-neutral-200: #EDE6D9;
+  --color-white: #FFFFFF;
+  --color-ink: #2B2320;
+  --color-muted: #6B615C;
+  --color-line: #E0D4C0;
+
+  /* ── Semantic ─────────────────────────────────────────── */
+  --color-success: #2E7D46;
+  --color-success-bg: #EBF5EF;
+  --color-warning: #B97A00;
+  --color-warning-bg: #FFF8E6;
+  --color-error: #B3261E;
+  --color-error-bg: #FDECEA;
+  --color-info: #1E5AA8;
+  --color-info-bg: #EBF1FB;
+
+  /* ── Gradients ────────────────────────────────────────── */
+  --gradient-gold: linear-gradient(180deg, #F2DEA2 0%, #E3C05C 50%, #C9A227 100%);
+  --gradient-sanctum: linear-gradient(160deg, #611626 0%, #4A0E1C 100%);
+  --gradient-hero-overlay: linear-gradient(180deg, rgba(74,14,28,0.55) 0%, rgba(0,0,0,0.40) 100%);
+  --gradient-gold-shimmer: linear-gradient(90deg, transparent 0%, rgba(201,162,39,0.15) 50%, transparent 100%);
+
+  /* ── Typography ───────────────────────────────────────── */
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-heading: 'Marcellus', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-regional: 'Mukta', 'Noto Sans Telugu', sans-serif;
+
+  /* ── Font Sizes ───────────────────────────────────────── */
+  --text-display-xl: clamp(34px, 5vw, 56px);
+  --text-display-lg: clamp(28px, 4vw, 40px);
+  --text-h1: clamp(24px, 3.5vw, 32px);
+  --text-h2: clamp(20px, 2.8vw, 26px);
+  --text-h3: clamp(17px, 2.2vw, 20px);
+  --text-body-lg: clamp(16px, 1.5vw, 18px);
+  --text-body-md: clamp(15px, 1.2vw, 16px);
+  --text-body-sm: clamp(13px, 1vw, 14px);
+  --text-caption: 12px;
+  --text-price: clamp(20px, 2.5vw, 24px);
+
+  /* ── Line Heights ─────────────────────────────────────── */
+  --leading-display: 1.04;
+  --leading-heading: 1.2;
+  --leading-body: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* ── Spacing ──────────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ── Border Radius ────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ──────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(43, 35, 32, 0.05);
+  --shadow-sm: 0 1px 4px rgba(43, 35, 32, 0.06), 0 2px 8px rgba(43, 35, 32, 0.04);
+  --shadow-md: 0 2px 8px rgba(43, 35, 32, 0.08), 0 4px 16px rgba(43, 35, 32, 0.06);
+  --shadow-lg: 0 4px 16px rgba(43, 35, 32, 0.10), 0 8px 32px rgba(43, 35, 32, 0.08);
+  --shadow-xl: 0 8px 32px rgba(43, 35, 32, 0.12), 0 16px 48px rgba(43, 35, 32, 0.10);
+  --shadow-card: var(--shadow-sm);
+  --shadow-card-hover: var(--shadow-lg);
+  --shadow-gold: 0 4px 16px rgba(201, 162, 39, 0.25);
+
+  /* ── Transitions ──────────────────────────────────────── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Z-Index ──────────────────────────────────────────── */
+  --z-base: 1;
+  --z-card: 10;
+  --z-nav: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
+
+  /* ── Layout ───────────────────────────────────────────── */
+  --max-w-content: 1140px;
+  --max-w-wide: 1320px;
+  --header-height: 72px;
+  --admin-sidebar-w: 260px;
+  --admin-sidebar-collapsed: 72px;
+
+  /* ── Content Aliases (for quick access) ──────────────── */
+  --bg-page: var(--color-ivory-bg);
+  --bg-cream: var(--color-cream);
+  --bg-paper: var(--color-paper);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --border-color: var(--color-line);
+  --accent-primary: var(--color-gold-600);
+  --accent-hover: var(--color-gold-700);
+  --brand-primary: var(--color-maroon-900);
+  --brand-secondary: var(--color-maroon-800);
+}
+
+/* ── Dark theme preparation (not active by default) ── */
+[data-theme="dark"] {
+  --bg-page: #1C1410;
+  --bg-cream: #221A14;
+  --bg-paper: #2A2018;
+  --text-primary: #F5ECD8;
+  --text-secondary: #A89880;
+  --border-color: #3A2E24;
+}
+
+/* ── Elder mode overrides ─────────────────────────────── */
+[data-elder="true"] {
+  --text-body-md: 18px;
+  --text-body-sm: 16px;
+  --text-h3: 22px;
+  font-size: 18px;
+}

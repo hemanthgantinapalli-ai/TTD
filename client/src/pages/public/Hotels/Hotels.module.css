@@ -1,0 +1,272 @@
+.pageHeader {
+  background: linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%);
+  padding: 48px 0;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+@media (min-width: 900px) {
+  .layoutGrid {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+/* Sidebar Filters */
+.filterSidebar {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-xs);
+  height: fit-content;
+  position: sticky;
+  top: 90px;
+}
+
+.filterTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-maroon-900);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filterGroup {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filterGroupTitle {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+  letter-spacing: 0.05em;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-neutral-800);
+  cursor: pointer;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  accent-color: var(--color-maroon-900);
+  width: 16px;
+  height: 16px;
+}
+
+/* Hotel Card in List */
+.hotelListGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hotelCardHorizontal {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+@media (min-width: 640px) {
+  .hotelCardHorizontal {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+.hotelCardHorizontal:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-gold-400);
+}
+
+.cardImgWrap {
+  position: relative;
+  height: 220px;
+}
+
+@media (min-width: 640px) {
+  .cardImgWrap {
+    height: 100%;
+    min-height: 220px;
+  }
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hotelMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.hotelTitle {
+  font-size: 20px;
+  color: var(--color-maroon-900);
+  margin-bottom: 6px;
+}
+
+.hotelAddress {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.proximityBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.proxBadge {
+  background: var(--color-sandal-100);
+  border: 1px solid var(--border-color);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--color-neutral-700);
+}
+
+.hotelCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  margin-top: 12px;
+}
+
+/* Hotel Detail Page */
+.detailHeader {
+  padding: 32px 0 24px;
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  height: 380px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 640px) {
+  .galleryGrid {
+    grid-template-columns: 1fr;
+    height: 240px;
+  }
+  .galleryThumbCol {
+    display: none;
+  }
+}
+
+.galleryMain {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.galleryThumbCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.galleryThumb {
+  width: 100%;
+  height: calc(50% - 6px);
+  object-fit: cover;
+}
+
+/* Rooms Container */
+.roomsSection {
+  margin-top: 40px;
+}
+
+.roomCard {
+  background: var(--bg-paper);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .roomCard {
+    grid-template-columns: 220px 1fr 220px;
+    align-items: center;
+  }
+}
+
+.roomCardSelected {
+  border-color: var(--color-gold-600);
+  background: #FFFDF9;
+  box-shadow: var(--shadow-sm);
+}
+
+.roomImg {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.roomFeatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.roomFeatureItem {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

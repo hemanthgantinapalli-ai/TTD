@@ -1,0 +1,462 @@
+/* ============================================================
+   TTDYATRA Global Styles
+   ============================================================ */
+
+@import './tokens.css';
+
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body);
+  color: var(--text-primary);
+  background-color: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ── Typography ───────────────────────────────────────── */
+.font-display { font-family: var(--font-display); }
+.font-heading  { font-family: var(--font-heading); }
+.font-body     { font-family: var(--font-body); }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  line-height: var(--leading-heading);
+}
+
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
+
+.display-xl { font-family: var(--font-display); font-size: var(--text-display-xl); line-height: var(--leading-display); }
+.display-lg { font-family: var(--font-display); font-size: var(--text-display-lg); line-height: var(--leading-display); }
+
+/* ── Eyebrow ──────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-gold-700);
+}
+
+/* ── Accent span (gold italic) ──────────────────────── */
+.accent {
+  font-style: italic;
+  color: var(--color-gold-700);
+}
+
+/* ── Grain texture overlay ──────────────────────────── */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.045'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+/* ── Card styles ─────────────────────────────────────── */
+.card {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.card-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  min-height: 48px;
+  border: 1.5px solid transparent;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-gold {
+  background: var(--gradient-gold);
+  color: var(--color-maroon-900);
+  border-color: var(--color-gold-600);
+  box-shadow: var(--shadow-gold);
+}
+.btn-gold:hover:not(:disabled) {
+  background: linear-gradient(180deg, #E3C05C 0%, #C9A227 100%);
+  box-shadow: 0 6px 20px rgba(201, 162, 39, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-maroon {
+  background: var(--gradient-sanctum);
+  color: var(--color-white);
+  border-color: var(--color-maroon-800);
+}
+.btn-maroon:hover:not(:disabled) {
+  background: linear-gradient(160deg, #7A1E2D 0%, #611626 100%);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-maroon-900);
+  border-color: var(--color-maroon-900);
+}
+.btn-outline:hover:not(:disabled) {
+  background: var(--color-maroon-050);
+}
+
+.btn-outline-gold {
+  background: transparent;
+  color: var(--color-gold-700);
+  border-color: var(--color-gold-600);
+}
+.btn-outline-gold:hover:not(:disabled) {
+  background: var(--color-gold-tint);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--color-sandal-100);
+}
+
+.btn-sm  { padding: 8px 16px; min-height: 36px; font-size: 13px; border-radius: var(--radius-sm); }
+.btn-lg  { padding: 14px 32px; min-height: 52px; font-size: 16px; }
+
+/* ── Input styles ─────────────────────────────────────── */
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-paper);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  min-height: 48px;
+  outline: none;
+}
+
+.input::placeholder { color: var(--color-neutral-400); }
+
+.input:focus {
+  border-color: var(--color-gold-600);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+}
+
+.input.error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.1);
+}
+
+/* ── Container ───────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--max-w-content);
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+
+@media (min-width: 640px) {
+  .container { padding-inline: 32px; }
+}
+
+@media (min-width: 1440px) {
+  .container { max-width: var(--max-w-wide); }
+}
+
+/* ── Section spacing ─────────────────────────────────── */
+.section { padding-block: var(--space-20); }
+@media (min-width: 768px) { .section { padding-block: calc(var(--space-20) * 1.4); } }
+
+/* ── Link underline animation ─────────────────────────── */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--color-gold-600);
+  transition: width var(--transition-base);
+}
+.link-underline:hover::after { width: 100%; }
+
+/* ── Gopuram watermark ────────────────────────────────── */
+.gopuram-watermark {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.06;
+  color: var(--color-gold-600);
+}
+
+/* ── Gold divider ─────────────────────────────────────── */
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-gold-400);
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gradient-gold);
+  opacity: 0.4;
+}
+
+/* ── Badge ───────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.badge-gold { background: var(--color-gold-100); color: var(--color-gold-700); }
+.badge-maroon { background: var(--color-maroon-100); color: var(--color-maroon-800); }
+.badge-success { background: var(--color-success-bg); color: var(--color-success); }
+.badge-warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge-error { background: var(--color-error-bg); color: var(--color-error); }
+.badge-info { background: var(--color-info-bg); color: var(--color-info); }
+
+/* ── Skip nav (accessibility) ────────────────────────── */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: var(--space-4);
+  z-index: 9999;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-maroon-900);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: top var(--transition-fast);
+}
+.skip-nav:focus { top: var(--space-4); }
+
+/* ── Skeleton shimmer ────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-sandal-200) 25%, var(--color-sandal-100) 50%, var(--color-sandal-200) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ── Fade-in animation ────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes goldShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+.rise {
+  animation: fadeInUp 0.6s ease both;
+}
+
+.floaty {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-sandal-100); }
+::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold-600); }
+
+/* ── Focus visible ───────────────────────────────────── */
+:focus-visible {
+  outline: 2.5px solid var(--color-gold-600);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Selection ───────────────────────────────────────── */
+::selection {
+  background: var(--color-gold-200);
+  color: var(--color-maroon-900);
+}
+
+/* ── Price text ──────────────────────────────────────── */
+.price {
+  font-family: var(--font-body);
+  font-size: var(--text-price);
+  font-weight: 700;
+  color: var(--color-maroon-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-original {
+  font-size: var(--text-body-sm);
+  color: var(--color-neutral-400);
+  text-decoration: line-through;
+}
+
+/* ── WhatsApp FAB ─────────────────────────────────────── */
+.whatsapp-fab {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  z-index: var(--z-sticky);
+  width: 56px;
+  height: 56px;
+  background: #25D366;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  transition: transform var(--transition-spring), box-shadow var(--transition-base);
+  color: white;
+}
+
+.whatsapp-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(37, 211, 102, 0.5);
+}
+
+@media (min-width: 768px) {
+  .whatsapp-fab { bottom: 30px; }
+}
+
+/* ── Mobile bottom nav spacer ────────────────────────── */
+.mobile-nav-spacer {
+  height: 72px;
+}
+@media (min-width: 768px) {
+  .mobile-nav-spacer { display: none; }
+}
+
+/* ── Utility classes ─────────────────────────────────── */
+.text-gold { color: var(--color-gold-600); }
+.text-gold-dark { color: var(--color-gold-700); }
+.text-maroon { color: var(--color-maroon-900); }
+.text-muted { color: var(--text-secondary); }
+.text-ink { color: var(--text-primary); }
+
+.bg-cream { background: var(--bg-cream); }
+.bg-paper { background: var(--bg-paper); }
+.bg-ivory { background: var(--bg-page); }
+.bg-maroon { background: var(--color-maroon-900); }
+.bg-gold-tint { background: var(--color-gold-tint); }
+
+.relative { position: relative; }
+.overflow-hidden { overflow: hidden; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: var(--space-2); }
+.gap-4 { gap: var(--space-4); }
+.gap-6 { gap: var(--space-6); }
+.gap-8 { gap: var(--space-8); }

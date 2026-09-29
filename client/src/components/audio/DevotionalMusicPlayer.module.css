@@ -1,0 +1,276 @@
+/* ============================================================
+   DevotionalMusicPlayer.module.css
+   ============================================================ */
+
+.player {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+/* ── "Tap to hear" unmute banner ────────────────────────── */
+.unmuteBanner {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #2A0616 0%, #4A0E1C 100%);
+  border: 1.5px solid rgba(243, 222, 138, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,162,39,0.15);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: fadeInUp 0.5s ease 0s both;
+  text-align: left;
+}
+
+.unmuteBanner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.4), 0 0 16px rgba(201,162,39,0.25);
+  border-color: rgba(243, 222, 138, 0.8);
+}
+
+.unmuteIcon {
+  font-size: 22px;
+  animation: bellShake 2s ease infinite;
+  flex-shrink: 0;
+}
+
+@keyframes bellShake {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(-12deg); }
+  30% { transform: rotate(12deg); }
+  45% { transform: rotate(-8deg); }
+  60% { transform: rotate(8deg); }
+  75% { transform: rotate(0deg); }
+}
+
+.unmuteText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.unmuteText strong {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #FFE699;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.unmuteText span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+/* ── Floating pill prompt (shown before user clicks) ─── */
+.prompt {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid var(--color-gold-400);
+  border-radius: 100px;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.15),
+    0 0 0 1px rgba(201,162,39,0.08);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  animation: fadeInUp 0.5s ease 1s both;
+}
+
+.prompt:hover {
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.2), 0 0 0 2px rgba(201,162,39,0.3);
+  transform: translateY(-2px);
+}
+
+.promptIcon {
+  font-size: 18px;
+  line-height: 1;
+  animation: beatIcon 2.5s ease infinite;
+}
+
+@keyframes beatIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.promptText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-maroon-800);
+  white-space: nowrap;
+}
+
+.promptSub {
+  font-size: 11px;
+  color: var(--color-neutral-600);
+  font-weight: 400;
+}
+
+/* ── Expanded player panel ──────────────────────────── */
+.panel {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid var(--color-gold-400);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.18),
+    0 2px 8px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  animation: fadeInUp 0.4s ease both;
+  min-width: 240px;
+}
+
+.trackInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.trackTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-maroon-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackStatus {
+  font-size: 11px;
+  color: var(--color-neutral-600);
+  margin-top: 2px;
+}
+
+/* Playing animation bars */
+.barsWrap {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.bar {
+  width: 3px;
+  background: var(--color-gold-600);
+  border-radius: 1px;
+  animation: grow 0.8s ease-in-out infinite alternate;
+}
+.bar:nth-child(1) { height: 6px; animation-delay: 0s; }
+.bar:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+.bar:nth-child(3) { height: 8px; animation-delay: 0.3s; }
+.bar:nth-child(4) { height: 14px; animation-delay: 0.1s; }
+.bar:nth-child(5) { height: 5px; animation-delay: 0.25s; }
+
+@keyframes grow {
+  from { transform: scaleY(0.4); }
+  to   { transform: scaleY(1); }
+}
+
+/* Pause state — bars frozen */
+.barsPaused .bar {
+  animation-play-state: paused;
+}
+
+/* ── Control buttons ─────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ctrlBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-gold-400);
+  background: linear-gradient(135deg, #FDF6E3 0%, #F2DEA2 100%);
+  color: var(--color-maroon-800);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.ctrlBtn:hover {
+  background: linear-gradient(135deg, #F2E090 0%, #E3C05C 100%);
+  transform: scale(1.08);
+  box-shadow: 0 2px 10px rgba(201,162,39,0.35);
+}
+
+.ctrlBtn:focus-visible {
+  outline: 2px solid var(--color-gold-600);
+  outline-offset: 2px;
+}
+
+/* Close button */
+.closeBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(0,0,0,0.06);
+  color: var(--color-neutral-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  background: rgba(0,0,0,0.12);
+  color: var(--color-maroon-800);
+}
+
+/* ── Keyframes ───────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mobile adjustments ──────────────────────────────── */
+@media (max-width: 767px) {
+  .player {
+    bottom: 80px; /* above mobile bottom nav */
+    right: 16px;
+  }
+  .panel {
+    min-width: 200px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .prompt, .panel { animation: none; }
+  .bar { animation: none !important; }
+  .promptIcon { animation: none; }
+}

@@ -1,0 +1,152 @@
+.bookingHeader {
+  background: linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%);
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 650px;
+  margin: 20px auto 0;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-neutral-400);
+}
+
+.stepItemActive {
+  color: var(--color-maroon-900);
+}
+
+.stepItemCompleted {
+  color: var(--color-success);
+}
+
+.stepNumber {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-neutral-200);
+  color: var(--color-neutral-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stepNumberActive {
+  background: var(--color-maroon-900);
+  color: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(74, 14, 28, 0.15);
+}
+
+.stepNumberCompleted {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.stepDivider {
+  flex: 1;
+  height: 2px;
+  background: var(--color-neutral-200);
+  max-width: 40px;
+}
+
+/* Main Layout */
+.bookingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+@media (min-width: 992px) {
+  .bookingGrid {
+    grid-template-columns: 1.3fr 0.7fr;
+  }
+}
+
+.formCard {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebarSummary {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 90px;
+  height: fit-content;
+}
+
+/* Traveller Box */
+.travellerCard {
+  background: var(--color-sandal-100);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.travellerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+/* Addon Item */
+.addonOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addonOptionSelected {
+  border-color: var(--color-gold-600);
+  background: var(--color-gold-tint);
+}
+
+/* Voucher */
+.voucherCard {
+  max-width: 750px;
+  margin: 0 auto;
+  background: var(--bg-paper);
+  border: 2px solid var(--color-gold-400);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+}
+
+.voucherWatermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.04;
+  pointer-events: none;
+}
