@@ -151,7 +151,7 @@ const AdminHotels = () => {
       </div>
 
       {/* Hotels Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '20px' }}>
         {hotels.map((h) => (
           <div
             key={h.id || h.slug}

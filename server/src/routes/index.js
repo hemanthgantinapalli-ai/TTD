@@ -756,6 +756,107 @@ router.get('/admin/overview', (req, res) => {
   });
 });
 
+// ─── Admin Live Notifications ─────────────────────────────────────────────────
+
+const READ_NOTIFICATION_IDS = new Set();
+
+router.get('/admin/notifications', (req, res) => {
+  const notifications = [];
+
+  // 1. Pending Bookings needing admin action
+  BOOKINGS.filter(b => b.status === 'Pending').forEach(b => {
+    notifications.push({
+      id: `notif-bkg-${b.bookingId}`,
+      type: 'booking_pending',
+      category: 'Bookings',
+      priority: 'high',
+      title: 'Action Required: Booking Confirmation Pending',
+      message: `${b.pnr} for ${b.itemName} by ${b.leadPilgrim?.name || 'Devotee'} (${b.leadPilgrim?.city || 'India'}) is waiting for approval.`,
+      amount: b.amount,
+      link: '/admin/bookings',
+      timestamp: b.createdAt || new Date().toISOString(),
+      read: READ_NOTIFICATION_IDS.has(`notif-bkg-${b.bookingId}`),
+      data: { pnr: b.pnr, bookingId: b.bookingId }
+    });
+  });
+
+  // 2. New Devotee Enquiries
+  ENQUIRIES.filter(e => e.status === 'New').forEach(e => {
+    notifications.push({
+      id: `notif-enq-${e.id}`,
+      type: 'enquiry_new',
+      category: 'Inquiries',
+      priority: 'high',
+      title: 'New Devotee Pilgrimage Enquiry',
+      message: `${e.name} from ${e.city || 'India'} requested: ${e.serviceType} • Contact: ${e.phone}`,
+      link: '/admin/marketing',
+      timestamp: e.createdAt || new Date().toISOString(),
+      read: READ_NOTIFICATION_IDS.has(`notif-enq-${e.id}`),
+      data: { enquiryId: e.id, phone: e.phone }
+    });
+  });
+
+  // 3. Recent Confirmed Bookings (All new bookings immediately notify the admin)
+  BOOKINGS.filter(b => b.status === 'Confirmed').slice(0, 10).forEach(b => {
+    notifications.push({
+      id: `notif-cnf-${b.bookingId}`,
+      type: 'booking_confirmed',
+      category: 'Bookings',
+      priority: 'high',
+      title: `Payment Confirmed: ${b.pnr || 'New Booking'}`,
+      message: `${b.leadPilgrim?.name || 'Devotee'} (${b.leadPilgrim?.phone || 'Phone'}) confirmed ${b.itemName} — Rs. ${b.amount?.toLocaleString('en-IN')} via ${b.paymentMethod || 'UPI (PhonePe QR)'}. Travel: ${b.date || 'Upcoming'}.`,
+      amount: b.amount,
+      link: '/admin/bookings',
+      timestamp: b.createdAt || new Date().toISOString(),
+      read: READ_NOTIFICATION_IDS.has(`notif-cnf-${b.bookingId}`),
+      data: { pnr: b.pnr, bookingId: b.bookingId, leadPilgrim: b.leadPilgrim, itemName: b.itemName, amount: b.amount }
+    });
+  });
+
+  // 4. System & Operational Temple Advisory
+  notifications.push({
+    id: 'notif-system-darshan-quota',
+    type: 'system_alert',
+    category: 'Alerts',
+    priority: 'info',
+    title: 'TTD VIP Break Darshan Quota Advisory',
+    message: 'TTD SED (Special Entry Darshan Rs. 300) next release quota opens on 24th at 10:00 AM IST. Prepare package inventory.',
+    link: '/admin/packages',
+    timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+    read: READ_NOTIFICATION_IDS.has('notif-system-darshan-quota')
+  });
+
+  // Sort by newest first
+  notifications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  res.json({
+    success: true,
+    count: notifications.length,
+    unreadCount,
+    data: notifications
+  });
+});
+
+router.post('/admin/notifications/:id/read', (req, res) => {
+  const { id } = req.params;
+  READ_NOTIFICATION_IDS.add(id);
+  res.json({ success: true, message: 'Notification marked as read' });
+});
+
+router.post('/admin/notifications/mark-all-read', (req, res) => {
+  BOOKINGS.forEach(b => {
+    READ_NOTIFICATION_IDS.add(`notif-bkg-${b.bookingId}`);
+    READ_NOTIFICATION_IDS.add(`notif-cnf-${b.bookingId}`);
+  });
+  ENQUIRIES.forEach(e => {
+    READ_NOTIFICATION_IDS.add(`notif-enq-${e.id}`);
+  });
+  READ_NOTIFICATION_IDS.add('notif-system-darshan-quota');
+  res.json({ success: true, message: 'All notifications marked as read' });
+});
+
 // ─── Admin Bookings Management ────────────────────────────────────────────────
 
 router.get('/admin/bookings', (req, res) => {
@@ -1002,6 +1103,26 @@ router.post('/bookings', (req, res) => {
     ...req.body
   };
   BOOKINGS.unshift(newBooking);
+
+  // Update devotee in admin USERS list
+  if (req.body.leadPilgrim && req.body.leadPilgrim.email) {
+    const existing = USERS.find(u => u.email?.toLowerCase() === req.body.leadPilgrim.email.toLowerCase());
+    if (existing) {
+      existing.totalBookings = (existing.totalBookings || 0) + 1;
+    } else {
+      USERS.unshift({
+        _id: 'usr_' + Date.now(),
+        name: req.body.leadPilgrim.name || 'Devotee',
+        email: req.body.leadPilgrim.email,
+        phone: req.body.leadPilgrim.phone || '',
+        role: 'devotee',
+        status: 'Active',
+        totalBookings: 1,
+        createdAt: new Date().toISOString().split('T')[0]
+      });
+    }
+  }
+
   res.status(201).json({
     success: true,
     message: 'Booking created successfully',
@@ -1015,38 +1136,6 @@ router.get('/bookings', (req, res) => {
     count: BOOKINGS.length,
     data: BOOKINGS
   });
-});
-
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-
-router.post('/auth/register', (req, res) => {
-  res.status(201).json({
-    success: true,
-    message: 'Registration successful. OTP sent to your mobile number.',
-    data: { otpSent: true }
-  });
-});
-
-router.post('/auth/send-otp', (req, res) => {
-  res.json({ success: true, message: 'OTP sent successfully', data: { otpSent: true } });
-});
-
-router.post('/auth/verify-otp', (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      user: { _id: 'usr_101', name: 'Venkatesh Prasad', email: 'devotee@ttdyatra.com', phone: req.body.phone || '+91 98765 43210', role: 'devotee' },
-      accessToken: 'jwt_mock_token_ttdyatra'
-    }
-  });
-});
-
-router.post('/auth/logout', (req, res) => {
-  res.json({ success: true, message: 'Logged out successfully' });
-});
-
-router.get('/auth/me', authenticate, (req, res) => {
-  res.json({ success: true, data: req.user.toJSON() });
 });
 
 // ─── Contact / Enquiry ────────────────────────────────────────────────────────

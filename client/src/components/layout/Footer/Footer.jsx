@@ -7,25 +7,24 @@ import styles from './Footer.module.css';
 
 const EXPLORE_LINKS = [
   { label: 'Home', to: ROUTES.HOME },
-  { label: 'Services', to: ROUTES.SERVICES },
-  { label: 'Packages', to: ROUTES.PACKAGES },
-  { label: 'About', to: ROUTES.ABOUT },
-  { label: 'Contact', to: ROUTES.CONTACT },
-  { label: 'Blog', to: ROUTES.BLOGS },
+  { label: 'About TTD Yatra', to: ROUTES.ABOUT },
+  { label: 'Darshan Guide & Rules', to: ROUTES.DARSHAN_GUIDE },
+  { label: 'Devotee Reviews', to: ROUTES.TESTIMONIALS },
+  { label: 'Help & FAQs', to: ROUTES.FAQ },
+  { label: 'Contact Support', to: ROUTES.CONTACT },
 ];
 
 const SERVICE_LINKS = [
-  { label: 'Hotels & Stays', to: `${ROUTES.SERVICES}#hotels` },
-  { label: 'Car Rentals', to: `${ROUTES.SERVICES}#cars` },
-  { label: 'Trip Assistance', to: `${ROUTES.SERVICES}#assistance` },
-  { label: 'Trip Packages', to: ROUTES.PACKAGES },
-  { label: 'Darshan Guide', to: ROUTES.DARSHAN_GUIDE },
+  { label: 'Tirumala Yatra Packages', to: ROUTES.PACKAGES },
+  { label: 'Hotels & Pilgrim Stays', to: ROUTES.HOTELS },
+  { label: 'Hill Fleet & Cab Rentals', to: ROUTES.CARS },
+  { label: 'Special Darshan Assistance', to: ROUTES.TRIP_ASSISTANCE },
 ];
 
 const LEGAL_LINKS = [
   { label: 'Privacy Policy', to: ROUTES.PRIVACY_POLICY },
-  { label: 'Refund Policy', to: ROUTES.REFUND_POLICY },
   { label: 'Terms of Service', to: ROUTES.TERMS },
+  { label: 'Refund & Cancellation', to: ROUTES.REFUND_POLICY },
 ];
 
 // Icons as inline SVG components for zero dependency
@@ -202,18 +201,6 @@ const Footer = () => {
                   <span>{APP_CONFIG.contact.address}</span>
                 </li>
               </ul>
-
-              {/* Legal */}
-              <div className={styles.legalLinks}>
-                {LEGAL_LINKS.map((link) => (
-                  <Link key={link.to} to={link.to} className={styles.legalLink}>
-                    {link.label}
-                  </Link>
-                ))}
-                <Link to={ROUTES.ADMIN_DASHBOARD} className={styles.legalLink} style={{ color: 'var(--color-gold-400)', fontWeight: 600 }}>
-                  ⚙️ Admin Portal
-                </Link>
-              </div>
             </div>
           </div>
 
@@ -221,11 +208,28 @@ const Footer = () => {
 
           {/* Bottom bar */}
           <div className={styles.bottomBar}>
-            <p className={styles.copyright}>
-              © {year} TTDYATRA. All rights reserved.
-            </p>
+            <div className={styles.bottomMainRow}>
+              <p className={styles.copyright}>
+                © {year} TTDYATRA. All rights reserved.
+              </p>
+              <div className={styles.bottomLegal}>
+                {LEGAL_LINKS.map((link, idx) => (
+                  <React.Fragment key={link.to}>
+                    {idx > 0 && <span className={styles.legalSep}>•</span>}
+                    <Link to={link.to} className={styles.legalLink}>
+                      {link.label}
+                    </Link>
+                  </React.Fragment>
+                ))}
+                <span className={styles.legalSep}>•</span>
+                <Link to={ROUTES.ADMIN_DASHBOARD} className={styles.adminPortalLink}>
+                  Staff Portal
+                </Link>
+              </div>
+            </div>
+
             <p className={styles.disclaimer}>
-              {APP_CONFIG.disclaimer}{' '}
+              {APP_CONFIG.disclaimer}
               <a
                 href={APP_CONFIG.official_ttd_url}
                 target="_blank"
@@ -243,3 +247,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

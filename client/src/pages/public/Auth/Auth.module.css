@@ -65,3 +65,16 @@
   font-size: 13px;
   color: var(--text-secondary);
 }
+
+@media (max-width: 480px) {
+  .authContainer {
+    padding: 24px 12px;
+  }
+  .authCard {
+    padding: 24px 16px;
+    border-radius: var(--radius-lg);
+  }
+  .authTitle {
+    font-size: 20px;
+  }
+}

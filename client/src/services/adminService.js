@@ -117,6 +117,20 @@ export const adminService = {
     const res = await api.put('/admin/settings', data);
     return res.data;
   },
+
+  // Real-Time Notifications
+  getNotifications: async () => {
+    const res = await api.get('/admin/notifications');
+    return res.data;
+  },
+  markNotificationRead: async (id) => {
+    const res = await api.post(`/admin/notifications/${id}/read`);
+    return res.data;
+  },
+  markAllNotificationsRead: async () => {
+    const res = await api.post('/admin/notifications/mark-all-read');
+    return res.data;
+  },
 };
 
 export default adminService;

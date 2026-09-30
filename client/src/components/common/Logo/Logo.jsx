@@ -9,6 +9,10 @@ import styles from './Logo.module.css';
 const Logo = ({
   size = 'md',
   className = '',
+  // eslint-disable-next-line no-unused-vars
+  showWordmark,   // accepted for API compat — not used (logo image already contains wordmark)
+  // eslint-disable-next-line no-unused-vars
+  variant,        // accepted for API compat — visual variant handled via className if needed
   ...props
 }) => {
   return (

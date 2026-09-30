@@ -177,24 +177,6 @@ a.contactItem:hover { color: var(--text-primary); }
   display: flex;
 }
 
-/* ── Legal Links ──────────────────────────────────── */
-.legalLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-color);
-}
-
-.legalLink {
-  font-size: 11px;
-  color: var(--color-neutral-400);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.legalLink:hover { color: var(--text-primary); }
-
 /* ── Gopuram Divider ──────────────────────────────── */
 .gopuramDivider {
   display: flex;
@@ -215,38 +197,86 @@ a.contactItem:hover { color: var(--text-primary); }
 .bottomBar {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-4);
 }
 
-@media (min-width: 640px) {
-  .bottomBar {
+.bottomMainRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .bottomMainRow {
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
   }
 }
 
 .copyright {
+  font-size: 12.5px;
+  color: var(--color-neutral-400);
+  margin: 0;
+}
+
+.bottomLegal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.legalLink {
   font-size: 12px;
   color: var(--color-neutral-400);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.legalLink:hover {
+  color: var(--color-gold-700);
+}
+
+.legalSep {
+  color: var(--color-neutral-300);
+  font-size: 10px;
+  user-select: none;
+}
+
+.adminPortalLink {
+  font-size: 12px;
+  color: var(--color-gold-700);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.adminPortalLink:hover {
+  color: var(--color-gold-600);
+  text-decoration: underline;
 }
 
 .disclaimer {
   font-size: 11px;
   color: var(--color-neutral-400);
-  max-width: 520px;
-  text-align: left;
-}
-
-@media (min-width: 640px) {
-  .disclaimer { text-align: right; }
+  line-height: 1.6;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: var(--space-3);
+  margin: 0;
 }
 
 .ttdLink {
   color: var(--color-gold-700);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   transition: color var(--transition-fast);
+  margin-left: 4px;
 }
 
-.ttdLink:hover { color: var(--color-gold-600); }
+.ttdLink:hover {
+  color: var(--color-gold-600);
+  text-decoration: underline;
+}

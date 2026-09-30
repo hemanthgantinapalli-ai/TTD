@@ -1,539 +1,398 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
-import { adminService } from '../../services/adminService';
-import { ROUTES } from '../../constants/routes';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { adminService } from "../../services/adminService";
+import { ROUTES } from "../../constants/routes";
+import officialLogo from "../../assets/images/logo/ttd-yatra-logo.png";
 
+const fmt = (n) => (n == null ? "-" : n.toLocaleString("en-IN"));
+const growthText = (n) =>
+  n == null ? null : `${n >= 0 ? "+" : ""}${n.toFixed(1)}% vs last month`;
+
+const STATUS_COLORS = {
+  Confirmed: { bg: "#E8F5EE", color: "#2E7D46" },
+  Pending:   { bg: "#FFF8E6", color: "#B97A00" },
+  Completed: { bg: "#EAF0FB", color: "#1E5AA8" },
+  Cancelled: { bg: "#FDECEA", color: "#B3261E" },
+};
+
+/* --- Icon SVGs (inline, no emoji) ---------------------------------------- */
+const Icon = ({ name, size = 20 }) => {
+  const icons = {
+    rupee:    <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fontSize="13" fontWeight="800" fill="#8C6B10">&#x20B9;</text>,
+    calendar: <><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" fill="none"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="1.8"/></>,
+    package:  <><path d="M21 10V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V10" stroke="currentColor" strokeWidth="1.8" fill="none"/><path d="M23 7l-11-5L1 7l11 5 11-5z" stroke="currentColor" strokeWidth="1.8" fill="none"/><line x1="12" y1="22" x2="12" y2="12" stroke="currentColor" strokeWidth="1.8"/></>,
+    hotel:    <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="1.8" fill="none"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    car:      <><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2" stroke="currentColor" strokeWidth="1.8" fill="none"/><rect x="5" y="13" width="14" height="8" rx="2" stroke="currentColor" strokeWidth="1.8" fill="none"/><circle cx="7.5" cy="21" r="1.5" fill="currentColor"/><circle cx="16.5" cy="21" r="1.5" fill="currentColor"/></>,
+    mail:     <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" strokeWidth="1.8" fill="none"/><polyline points="22,6 12,13 2,6" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    users:    <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.8" fill="none"/><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.8" fill="none"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.8"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.8"/></>,
+    chart:    <><line x1="18" y1="20" x2="18" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></>,
+    ticket:   <><path d="M2 9a2 2 0 0 1 0-4h20a2 2 0 0 1 0 4v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V9z" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    zap:      <><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    donut:    <><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    eye:      <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+    bell:     <><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" strokeWidth="1.8" fill="none"/></>,
+  };
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display:"inline-block", flexShrink: 0 }}>
+      {icons[name] || null}
+    </svg>
+  );
+};
+
+/* --- KPI Card --------------------------------------------------------------- */
+const KpiCard = ({ iconName, label, value, pctText, positive = true }) => (
+  <div style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px 20px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)", display:"flex", flexDirection:"column", gap:"6px", minWidth:0 }}>
+    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+      <span style={{ fontSize:"11px", fontWeight:600, color:"#8C7E78", textTransform:"uppercase", letterSpacing:"0.5px" }}>{label}</span>
+      <span style={{ color:"#8C7E78" }}><Icon name={iconName} size={18} /></span>
+    </div>
+    <div style={{ fontSize:"26px", fontWeight:800, color:"#3B0A17", lineHeight:1.1 }}>{value}</div>
+    {pctText && (
+      <div style={{ fontSize:"11.5px", color: positive ? "#2E7D46" : "#B3261E", fontWeight:600 }}>{pctText}</div>
+    )}
+  </div>
+);
+
+/* --- SVG Revenue+Bookings Chart -------------------------------------------- */
+const RevenueChart = ({ data }) => {
+  if (!data || !data.length) {
+    return (
+      <div style={{ height:"180px", display:"flex", alignItems:"center", justifyContent:"center", color:"#8C7E78", fontSize:"13px" }}>
+        No booking or revenue data available for this period.
+      </div>
+    );
+  }
+  const maxRev = Math.max(...data.map(d => d.revenue), 1);
+  const maxBk  = Math.max(...data.map(d => d.bookings), 1);
+  const W = 520, H = 180, padL = 52, padR = 28, padB = 28, padT = 12;
+  const chartW = W - padL - padR;
+  const chartH = H - padB - padT;
+  const n = data.length;
+  const barW = Math.floor(chartW / n * 0.42);
+  const xPos = (i) => padL + (i + 0.5) * (chartW / n);
+  const linePoints = data.map((d, i) => xPos(i) + "," + (padT + chartH - (d.bookings / maxBk) * chartH)).join(" ");
+
+  return (
+    <svg viewBox={"0 0 " + W + " " + H} style={{ width:"100%", height:"auto", overflow:"visible" }}>
+      {[0, 0.25, 0.5, 0.75, 1].map((t, i) => {
+        const y = padT + chartH * (1 - t);
+        const lbl = t === 0 ? "Rs.0" : "Rs." + (maxRev * t / 100000).toFixed(0) + "L";
+        return (
+          <g key={i}>
+            <line x1={padL} x2={W - padR} y1={y} y2={y} stroke="#EDE6D9" strokeWidth="1" />
+            <text x={padL - 5} y={y + 4} textAnchor="end" fontSize="9" fill="#8C7E78">{lbl}</text>
+          </g>
+        );
+      })}
+      {data.map((d, i) => {
+        const x = xPos(i);
+        const bh = (d.revenue / maxRev) * chartH;
+        const y = padT + chartH - bh;
+        return (
+          <g key={i}>
+            <rect x={x - barW / 2} y={y} width={barW} height={bh} rx="3" fill="#6B1A2A" />
+            <text x={x} y={H - padB + 14} textAnchor="middle" fontSize="9" fill="#8C7E78">{d.month}</text>
+          </g>
+        );
+      })}
+      {[0, 0.5, 1].map((t, i) => (
+        <text key={i} x={W - padR + 4} y={padT + chartH * (1 - t) + 4} fontSize="9" fill="#C9A227">{Math.round(maxBk * t)}</text>
+      ))}
+      <polyline points={linePoints} fill="none" stroke="#C9A227" strokeWidth="2" strokeLinejoin="round" />
+      {data.map((d, i) => (
+        <circle key={i} cx={xPos(i)} cy={padT + chartH - (d.bookings / maxBk) * chartH} r="4" fill="#C9A227" stroke="#fff" strokeWidth="1.5" />
+      ))}
+    </svg>
+  );
+};
+
+/* --- Donut Chart ------------------------------------------------------------ */
+const DonutChart = ({ confirmed = 0, pending = 0, cancelled = 0, completed = 0 }) => {
+  const total = confirmed + pending + cancelled + completed || 1;
+  const segments = [
+    { label:"Confirmed", value: confirmed, color:"#2E7D46" },
+    { label:"Pending",   value: pending,   color:"#E3C05C" },
+    { label:"Cancelled", value: cancelled, color:"#E3514F" },
+    { label:"Completed", value: completed, color:"#1E5AA8" },
+  ];
+  const R = 40, cx = 55, cy = 55, stroke = 22;
+  let cumAngle = -90;
+  const arcs = segments.map(seg => {
+    const angle = (seg.value / total) * 360;
+    const start = cumAngle;
+    cumAngle += angle;
+    const toRad = d => (d * Math.PI) / 180;
+    const x1 = cx + R * Math.cos(toRad(start));
+    const y1 = cy + R * Math.sin(toRad(start));
+    const x2 = cx + R * Math.cos(toRad(cumAngle));
+    const y2 = cy + R * Math.sin(toRad(cumAngle));
+    return { ...seg, angle, d: "M " + x1 + " " + y1 + " A " + R + " " + R + " 0 " + (angle > 180 ? 1 : 0) + " 1 " + x2 + " " + y2 };
+  });
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:"20px", flexWrap:"wrap" }}>
+      <svg width="110" height="110" viewBox="0 0 110 110">
+        {arcs.filter(a => a.angle > 0).map((arc, i) => (
+          <path key={i} d={arc.d} fill="none" stroke={arc.color} strokeWidth={stroke} strokeLinecap="butt" />
+        ))}
+        <text x={cx} y={cy - 5} textAnchor="middle" fontSize="18" fontWeight="800" fill="#3B0A17">{confirmed + pending + cancelled + completed}</text>
+        <text x={cx} y={cy + 10} textAnchor="middle" fontSize="8" fill="#8C7E78">Total</text>
+        <text x={cx} y={cy + 20} textAnchor="middle" fontSize="8" fill="#8C7E78">Bookings</text>
+      </svg>
+      <div style={{ display:"flex", flexDirection:"column", gap:"8px" }}>
+        {segments.map(s => (
+          <div key={s.label} style={{ display:"flex", alignItems:"center", gap:"8px", fontSize:"12px" }}>
+            <span style={{ width:"10px", height:"10px", borderRadius:"50%", background:s.color, flexShrink:0, display:"inline-block" }} />
+            <span style={{ color:"#5A4E4A", minWidth:"72px" }}>{s.label}</span>
+            <span style={{ fontWeight:700, color:"#2B2320" }}>{s.value}</span>
+            <span style={{ color:"#8C7E78" }}>({((s.value / total) * 100).toFixed(1)}%)</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* === MAIN DASHBOARD ======================================================== */
 const AdminDashboard = () => {
   const [data, setData] = useState(null);
   const [overviewError, setOverviewError] = useState(false);
+  const [now, setNow] = useState(new Date());
 
   async function loadOverview() {
     try {
       const res = await adminService.getOverview();
-      if (res?.data) {
+      if (res && res.data) {
         setData(res.data);
         setOverviewError(false);
       } else {
         setOverviewError(true);
       }
     } catch {
-      console.warn('Error loading admin overview');
+      console.warn("Error loading admin overview");
       setOverviewError(true);
     }
   }
 
   useEffect(() => {
     loadOverview();
+    const timer = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(timer);
   }, []);
 
   const handleQuickStatusChange = async (bookingId, newStatus) => {
     try {
       await adminService.updateBookingStatus(bookingId, newStatus);
-      toast.success(`Booking status updated to ${newStatus}`);
+      toast.success("Booking status updated to " + newStatus);
       loadOverview();
     } catch {
-      toast.error('Failed to update status');
+      toast.error("Failed to update status");
     }
   };
 
-  const stats = data?.stats || {};
-  const unavailableValue = !data && !overviewError ? '...' : '—';
+  const stats          = (data && data.stats)          || {};
+  const recentBookings = (data && data.recentBookings) || [];
+  const monthlyRevenue = (data && data.monthlyRevenue) || [];
+  const loading        = !data && !overviewError;
 
-  const recentBookings = data?.recentBookings || [];
-  const recentEnquiries = data?.recentEnquiries || [];
-  const monthlyRevenue = data?.monthlyRevenue || [];
+  const dateStr = now.toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"short", year:"numeric" });
+  const timeStr = now.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit", hour12:true });
+
+  const QUICK_ACTIONS = [
+    { label:"Add Package",     iconName:"package", to: ROUTES.ADMIN_PACKAGES  },
+    { label:"Add Hotel",       iconName:"hotel",   to: ROUTES.ADMIN_HOTELS    },
+    { label:"Add Vehicle",     iconName:"car",     to: ROUTES.ADMIN_CARS      },
+    { label:"Manage Bookings", iconName:"ticket",  to: ROUTES.ADMIN_BOOKINGS  },
+    { label:"Manage Users",    iconName:"users",   to: ROUTES.ADMIN_USERS     },
+    { label:"View Leads",      iconName:"mail",    to: ROUTES.ADMIN_MARKETING },
+    { label:"Edit Terms",      iconName:"zap",     to: ROUTES.ADMIN_CMS       },
+  ];
 
   return (
-    <div>
+    <div style={{ display:"flex", flexDirection:"column", gap:"22px" }}>
       {overviewError && (
-        <p role="alert" style={{ margin: '0 0 18px', padding: '12px 16px', border: '1px solid #e8c7a6', borderRadius: '6px', background: '#fff6eb', color: '#75410d', fontSize: '13px' }}>
-          Dashboard metrics are unavailable. No values are being shown until the overview service responds.
-        </p>
+        <div style={{ padding:"12px 16px", border:"1px solid #e8c7a6", borderRadius:"8px", background:"#fff6eb", color:"#75410d", fontSize:"13px" }}>
+          Dashboard metrics are temporarily unavailable. Data will reload automatically.
+        </div>
       )}
+
       {/* Welcome Banner */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #4A0E1C 0%, #30060F 100%)',
-          borderRadius: '12px',
-          padding: '24px 30px',
-          color: '#FAF0F2',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-          marginBottom: '28px',
-          boxShadow: '0 4px 16px rgba(50,7,16,0.15)',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '24px' }}>🕉️</span>
-            <h1 style={{ fontSize: '22px', fontWeight: 700, margin: 0, fontFamily: 'Cinzel, serif', color: '#F2DEA2' }}>
-              Sri Venkateswara Admin Command
-            </h1>
-          </div>
-          <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#F3DEE2', maxWidth: '600px' }}>
-            Real-time management for Tirupati Yatra bookings, sanitized hill fleet, temple packages, and all terms & policies.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Link
-            to={ROUTES.ADMIN_CMS}
+      <div className="admin-welcome-banner" style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:"14px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:"14px", minWidth: 0 }}>
+          <img
+            src={officialLogo}
+            alt="TTD Yatra Official Logo"
             style={{
-              padding: '9px 16px',
-              fontSize: '13px',
-              fontWeight: 700,
-              borderRadius: '6px',
-              background: '#E3C05C',
-              color: '#320710',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
+              width:"46px",
+              height:"46px",
+              borderRadius:"10px",
+              objectFit:"cover",
+              flexShrink:0,
+              border:"1.5px solid #EAE0D5",
+              boxShadow:"0 2px 6px rgba(0,0,0,0.08)",
             }}
-          >
-            <span>📜</span> Manage All Terms
-          </Link>
-          <Link
-            to={ROUTES.ADMIN_BOOKINGS}
-            style={{
-              padding: '9px 16px',
-              fontSize: '13px',
-              fontWeight: 600,
-              borderRadius: '6px',
-              background: 'rgba(255,255,255,0.15)',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.2)',
-              textDecoration: 'none',
-            }}
-          >
-            Bookings Ledger →
-          </Link>
-        </div>
-      </div>
-
-      {/* KPI Cards Grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-          gap: '18px',
-          marginBottom: '28px',
-        }}
-      >
-        {/* Total Revenue */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Revenue</span>
-            <span style={{ fontSize: '20px' }}>💰</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.totalRevenue == null ? unavailableValue : `₹${stats.totalRevenue.toLocaleString('en-IN')}`}
-          </div>
-          <div style={{ fontSize: '11px', color: '#2E7D46', fontWeight: 600, marginTop: '6px' }}>
-            {stats.totalRevenue == null ? 'Awaiting current revenue data' : 'Current recorded revenue'}
+          />
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ fontSize:"19px", fontWeight:800, margin:0, color:"#2B2320", lineHeight: 1.2 }}>Welcome Back, Sri Venkateswara Admin</h1>
+            <p style={{ margin:"3px 0 0", fontSize:"12.5px", color:"#8C7E78" }}>Here&apos;s what&apos;s happening with your TTD Yatra platform today.</p>
           </div>
         </div>
-
-        {/* Bookings */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Bookings</span>
-            <span style={{ fontSize: '20px' }}>🎟️</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.totalBookings ?? unavailableValue}
-          </div>
-          <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            <strong style={{ color: '#2E7D46' }}>{stats.confirmedBookings ?? unavailableValue} Confirmed</strong> • {stats.pendingBookings ?? unavailableValue} Pending
-          </div>
-        </div>
-
-        {/* Packages */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Yatra Packages</span>
-            <span style={{ fontSize: '20px' }}>📦</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.packagesCount == null ? unavailableValue : `${stats.packagesCount} Active`}
-          </div>
-          <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            Active platform packages
-          </div>
-        </div>
-
-        {/* Hotels */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Partner Stays</span>
-            <span style={{ fontSize: '20px' }}>🏨</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.hotelsCount == null ? unavailableValue : `${stats.hotelsCount} Partner stays`}
-          </div>
-          <div style={{ fontSize: '11px', color: '#B97A00', fontWeight: 600, marginTop: '6px' }}>
-            Current stay inventory
-          </div>
-        </div>
-
-        {/* Fleet */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Hill Fleet Cabs</span>
-            <span style={{ fontSize: '20px' }}>🚗</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.carsCount == null ? unavailableValue : `${stats.carsCount} Vehicles`}
-          </div>
-          <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            Current fleet inventory
-          </div>
-        </div>
-
-        {/* Open Inquiries */}
-        <div style={{ background: '#FFFFFF', padding: '20px', borderRadius: '10px', border: '1px solid #E5DFD5', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#6B615C', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Devotee Leads</span>
-            <span style={{ fontSize: '20px' }}>📩</span>
-          </div>
-          <div style={{ fontSize: '24px', fontWeight: 800, color: stats.openEnquiries > 0 ? '#C96412' : '#2E7D46', marginTop: '8px' }}>
-            {stats.openEnquiries == null ? unavailableValue : `${stats.openEnquiries} New`}
-          </div>
-          <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            Trip assistance & custom quotes
-          </div>
-        </div>
-      </div>
-
-      {/* Main Grid: Bookings & Monthly Performance */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px', marginBottom: '28px' }}>
-        {/* Monthly Performance Visual */}
-        <div style={{ background: '#FFFFFF', padding: '24px', borderRadius: '10px', border: '1px solid #E5DFD5' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#4A0E1C', margin: 0 }}>
-              📈 Revenue & Booking Trajectory
-            </h3>
-            <span style={{ fontSize: '12px', color: '#6B615C' }}>2026 Season</span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {monthlyRevenue.length ? monthlyRevenue.map((item) => (
-              <div key={item.month}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, color: '#4A3F3A' }}>{item.month} 2026</span>
-                  <span style={{ fontWeight: 700, color: '#4A0E1C' }}>
-                    ₹{item.revenue.toLocaleString('en-IN')} ({item.bookings} yatras)
-                  </span>
-                </div>
-                <div style={{ height: '8px', background: '#F3DEE2', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      height: '100%',
-                      width: `${Math.min(100, (item.revenue / 350000) * 100)}%`,
-                      background: 'linear-gradient(90deg, #A88318 0%, #C9A227 100%)',
-                      borderRadius: '4px',
-                    }}
-                  />
-                </div>
-              </div>
-            )) : (
-              <p style={{ margin: 0, padding: '28px 12px', color: '#6B615C', fontSize: '13px', textAlign: 'center' }}>
-                No booking or payment history is available for this period.
-              </p>
-            )}
-          </div>
-
-        </div>
-
-        {/* Quick Management Shortcuts */}
-        <div style={{ background: '#FFFFFF', padding: '24px', borderRadius: '10px', border: '1px solid #E5DFD5' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#4A0E1C', margin: '0 0 16px' }}>
-            ⚡ Fast Actions
-          </h3>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-            <Link
-              to={ROUTES.ADMIN_CMS}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#FFF8E6',
-                border: '1px solid #F2DEA2',
-                color: '#8C6B10',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>📜</span>
-              <strong style={{ fontSize: '13px' }}>Edit All Terms</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Policies, rules & banner</span>
-            </Link>
-
-            <Link
-              to={ROUTES.ADMIN_BOOKINGS}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#FAF0F2',
-                border: '1px solid #F3DEE2',
-                color: '#4A0E1C',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>🎟️</span>
-              <strong style={{ fontSize: '13px' }}>Manage Bookings</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Status & refunds</span>
-            </Link>
-
-            <Link
-              to={ROUTES.ADMIN_PACKAGES}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#F8F6F0',
-                border: '1px solid #E0D4C0',
-                color: '#2B2320',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>📦</span>
-              <strong style={{ fontSize: '13px' }}>Yatra Packages</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Add/edit tours</span>
-            </Link>
-
-            <Link
-              to={ROUTES.ADMIN_HOTELS}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#F8F6F0',
-                border: '1px solid #E0D4C0',
-                color: '#2B2320',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>🏨</span>
-              <strong style={{ fontSize: '13px' }}>Hotels Directory</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Rates & inventory</span>
-            </Link>
-
-            <Link
-              to={ROUTES.ADMIN_CARS}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#F8F6F0',
-                border: '1px solid #E0D4C0',
-                color: '#2B2320',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>🚗</span>
-              <strong style={{ fontSize: '13px' }}>Fleet Vehicles</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Cabs & drivers</span>
-            </Link>
-
-            <Link
-              to={ROUTES.ADMIN_SETTINGS}
-              style={{
-                padding: '14px',
-                borderRadius: '8px',
-                background: '#F8F6F0',
-                border: '1px solid #E0D4C0',
-                color: '#2B2320',
-                textDecoration: 'none',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>⚙️</span>
-              <strong style={{ fontSize: '13px' }}>Settings</strong>
-              <span style={{ fontSize: '11px', color: '#6B615C' }}>Hotlines & WhatsApp</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Bookings Ledger Table */}
-      <div style={{ background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E5DFD5', padding: '24px', marginBottom: '28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#4A0E1C', margin: 0 }}>
-              Recent Devotee Bookings
-            </h3>
-            <span style={{ fontSize: '12.5px', color: '#6B615C' }}>
-              Live vouchers generated across packages, hotels, and fleet
-            </span>
-          </div>
-
-          <Link to={ROUTES.ADMIN_BOOKINGS} style={{ fontSize: '13px', color: '#8C2A3B', fontWeight: 600, textDecoration: 'none' }}>
-            View All Bookings ({stats.totalBookings}) →
-          </Link>
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ background: '#FAF0F2', borderBottom: '2px solid #E5DFD5', textAlign: 'left' }}>
-                <th style={{ padding: '12px' }}>PNR</th>
-                <th style={{ padding: '12px' }}>Devotee Name</th>
-                <th style={{ padding: '12px' }}>Item Booked</th>
-                <th style={{ padding: '12px' }}>Travel Date</th>
-                <th style={{ padding: '12px' }}>Amount</th>
-                <th style={{ padding: '12px' }}>Status</th>
-                <th style={{ padding: '12px' }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentBookings.map((b) => (
-                <tr key={b.bookingId} style={{ borderBottom: '1px solid #EDE6D9' }}>
-                  <td style={{ padding: '12px', fontWeight: 700, color: '#4A0E1C' }}>
-                    {b.pnr}
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <div style={{ fontWeight: 600 }}>{b.leadPilgrim?.name || 'Devotee'}</div>
-                    <div style={{ fontSize: '11px', color: '#6B615C' }}>{b.leadPilgrim?.phone}</div>
-                  </td>
-                  <td style={{ padding: '12px', maxWidth: '260px' }}>
-                    <span style={{ fontSize: '11px', textTransform: 'uppercase', background: '#F8F2E4', padding: '2px 6px', borderRadius: '4px', marginRight: '6px', fontWeight: 600 }}>
-                      {b.type}
-                    </span>
-                    <span style={{ fontWeight: 500 }}>{b.itemName}</span>
-                  </td>
-                  <td style={{ padding: '12px' }}>{b.date}</td>
-                  <td style={{ padding: '12px', fontWeight: 700 }}>
-                    ₹{b.amount?.toLocaleString('en-IN')}
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <span
-                      style={{
-                        padding: '3px 8px',
-                        borderRadius: '12px',
-                        fontSize: '11.5px',
-                        fontWeight: 700,
-                        background:
-                          b.status === 'Confirmed'
-                            ? '#EBF5EF'
-                            : b.status === 'Pending'
-                            ? '#FFF8E6'
-                            : b.status === 'Completed'
-                            ? '#EBF1FB'
-                            : '#FDECEA',
-                        color:
-                          b.status === 'Confirmed'
-                            ? '#2E7D46'
-                            : b.status === 'Pending'
-                            ? '#B97A00'
-                            : b.status === 'Completed'
-                            ? '#1E5AA8'
-                            : '#B3261E',
-                      }}
-                    >
-                      {b.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '12px' }}>
-                    <select
-                      value={b.status}
-                      onChange={(e) => handleQuickStatusChange(b.bookingId, e.target.value)}
-                      style={{
-                        fontSize: '12px',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        border: '1px solid #D8CBB8',
-                        background: '#fff',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <option value="Confirmed">Confirmed</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Recent Enquiries & Leads */}
-      <div style={{ background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E5DFD5', padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#4A0E1C', margin: 0 }}>
-              Recent Trip Assistance Inquiries
-            </h3>
-            <span style={{ fontSize: '12.5px', color: '#6B615C' }}>
-              Custom yatra and senior citizen pilgrimage assistance requests
-            </span>
-          </div>
-
-          <Link to={ROUTES.ADMIN_MARKETING} style={{ fontSize: '13px', color: '#8C2A3B', fontWeight: 600, textDecoration: 'none' }}>
-            View All Inquiries →
-          </Link>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-          {recentEnquiries.map((enq) => (
-            <div key={enq.id} style={{ background: '#FEFCF7', border: '1px solid #E0D4C0', borderRadius: '8px', padding: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                <div>
-                  <strong style={{ fontSize: '14px', color: '#4A0E1C' }}>{enq.name}</strong>
-                  <div style={{ fontSize: '12px', color: '#6B615C' }}>{enq.city} • 📞 {enq.phone}</div>
-                </div>
-                <span style={{ background: '#FFF8E6', color: '#B97A00', padding: '2px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: 700 }}>
-                  {enq.status}
-                </span>
-              </div>
-              <div style={{ fontSize: '12.5px', fontWeight: 600, color: '#8C6B10', marginBottom: '4px' }}>
-                {enq.serviceType}
-              </div>
-              <p style={{ fontSize: '12px', color: '#4A3F3A', margin: '4px 0 10px', fontStyle: 'italic', background: '#F8F2E4', padding: '8px', borderRadius: '4px' }}>
-                "{enq.message}"
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11.5px', color: '#6B615C' }}>
-                <span>Date: <strong>{enq.preferredDate}</strong> ({enq.travellersCount} Devotees)</span>
-                <a
-                  href={`https://wa.me/${enq.phone.replace(/[^0-9]/g, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    background: '#25D366',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    fontWeight: 700,
-                  }}
-                >
-                  WhatsApp Lead ↗
-                </a>
-              </div>
+        <div style={{ display:"flex", alignItems:"center", gap:"10px", flexWrap: "wrap" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"8px", padding:"8px 14px", border:"1px solid #EAE0D5", borderRadius:"9px", background:"#FAF8F5" }}>
+            <Icon name="calendar" size={15} />
+            <div>
+              <div style={{ fontSize:"11.5px", fontWeight:600, color:"#2B2320" }}>{dateStr}</div>
+              <div style={{ fontSize:"10px", color:"#8C7E78" }}>{timeStr}</div>
             </div>
-          ))}
+          </div>
+          <Link to={ROUTES.HOME} target="_blank" rel="noopener noreferrer" style={{ display:"flex", alignItems:"center", gap:"6px", padding:"8px 15px", borderRadius:"8px", background:"#2B0A12", color:"#F2DEA2", fontSize:"12px", fontWeight:600, textDecoration:"none", boxShadow:"0 2px 8px rgba(43,10,18,0.25)" }}>
+            <Icon name="eye" size={13} /> View Live Site
+          </Link>
         </div>
       </div>
+
+      {/* KPI Cards */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(135px, 1fr))", gap:"12px" }}>
+        <KpiCard iconName="rupee"   label="Total Revenue"   value={stats.totalRevenue   == null ? (loading ? "..." : "-") : "Rs." + fmt(stats.totalRevenue)} pctText={growthText(stats.revenueGrowth)}   />
+        <KpiCard iconName="ticket"  label="Total Bookings"  value={stats.totalBookings  ?? (loading ? "..." : "-")} pctText={growthText(stats.bookingsGrowth)}  />
+        <KpiCard iconName="package" label="Yatra Packages"  value={stats.packagesCount  ?? (loading ? "..." : "-")} pctText={growthText(stats.packagesGrowth)}  />
+        <KpiCard iconName="hotel"   label="Partner Stays"   value={stats.hotelsCount    ?? (loading ? "..." : "-")} pctText={growthText(stats.hotelsGrowth)}    />
+        <KpiCard iconName="car"     label="Hill Fleet Cabs" value={stats.carsCount      ?? (loading ? "..." : "-")} pctText={growthText(stats.carsGrowth)}      />
+        <KpiCard iconName="mail"    label="Devotee Leads"   value={stats.openEnquiries  ?? (loading ? "..." : "-")} pctText={growthText(stats.enquiriesGrowth)} />
+      </div>
+
+      {/* Revenue Chart + Recent Bookings (Collapses on tablet/mobile) */}
+      <div className="admin-two-col-grid">
+        {/* Chart */}
+        <div style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"14px", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+              <Icon name="chart" size={18} />
+              <h3 style={{ margin:0, fontSize:"14.5px", fontWeight:700, color:"#2B2320" }}>Revenue &amp; Booking Trajectory</h3>
+            </div>
+            <span style={{ fontSize:"11px", color:"#8C7E78", background:"#FAF8F5", padding:"3px 8px", borderRadius:"20px", border:"1px solid #EAE0D5" }}>Last 6 Months</span>
+          </div>
+          <RevenueChart data={monthlyRevenue} />
+          <div style={{ display:"flex", gap:"18px", marginTop:"10px", justifyContent:"center" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"6px", fontSize:"11.5px", color:"#5A4E4A" }}>
+              <span style={{ width:"12px", height:"12px", borderRadius:"2px", background:"#6B1A2A", display:"inline-block" }} /> Revenue
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:"6px", fontSize:"11.5px", color:"#5A4E4A" }}>
+              <span style={{ width:"14px", height:"3px", background:"#C9A227", display:"inline-block", borderRadius:"2px" }} /> Bookings
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Bookings */}
+        <div style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)", display:"flex", flexDirection:"column" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"12px" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+              <Icon name="ticket" size={18} />
+              <h3 style={{ margin:0, fontSize:"14.5px", fontWeight:700, color:"#2B2320" }}>Recent Bookings</h3>
+            </div>
+            <Link to={ROUTES.ADMIN_BOOKINGS} style={{ fontSize:"12px", color:"#8C2A3B", fontWeight:600, textDecoration:"none" }}>View All →</Link>
+          </div>
+          <div style={{ overflowX:"auto", flex:1, WebkitOverflowScrolling: "touch" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse", fontSize:"11.5px", minWidth: "480px" }}>
+              <thead>
+                <tr style={{ background:"#FAF8F5" }}>
+                  {["Booking ID","Customer","Package / Hotel / Car","Amount","Status","Date"].map(h => (
+                    <th key={h} style={{ padding:"8px 9px", textAlign:"left", fontWeight:600, color:"#6B615C", whiteSpace:"nowrap", borderBottom:"1px solid #EAE0D5" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {recentBookings.length === 0 && (
+                  <tr><td colSpan={6} style={{ padding:"20px", textAlign:"center", color:"#8C7E78" }}>No recent bookings</td></tr>
+                )}
+                {recentBookings.map(b => {
+                  const sc = STATUS_COLORS[b.status] || { bg:"#F5F0EB", color:"#5A4E4A" };
+                  return (
+                    <tr key={b.bookingId} style={{ borderBottom:"1px solid #F0E8DE" }}>
+                      <td style={{ padding:"8px 9px", fontWeight:700, color:"#3B0A17", whiteSpace:"nowrap" }}>{b.pnr || "#BKG-" + String(b.bookingId).padStart(4,"0")}</td>
+                      <td style={{ padding:"8px 9px", fontWeight:600, whiteSpace:"nowrap" }}>{(b.leadPilgrim && b.leadPilgrim.name) || "Devotee"}</td>
+                      <td style={{ padding:"8px 9px", maxWidth:"130px", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{b.itemName}</td>
+                      <td style={{ padding:"8px 9px", fontWeight:700, whiteSpace:"nowrap" }}>Rs.{fmt(b.amount)}</td>
+                      <td style={{ padding:"8px 9px" }}>
+                        <span style={{ padding:"2px 8px", borderRadius:"12px", fontSize:"10.5px", fontWeight:700, background:sc.bg, color:sc.color, whiteSpace:"nowrap" }}>{b.status}</span>
+                      </td>
+                      <td style={{ padding:"8px 9px", color:"#8C7E78", whiteSpace:"nowrap" }}>{b.date}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions + Booking Status (Collapses on tablet/mobile) */}
+      <div className="admin-actions-grid">
+        <div style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"14px" }}>
+            <Icon name="zap" size={18} />
+            <h3 style={{ margin:0, fontSize:"14.5px", fontWeight:700, color:"#2B2320" }}>Quick Actions</h3>
+          </div>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:"10px" }}>
+            {QUICK_ACTIONS.map(qa => (
+              <Link key={qa.to} to={qa.to}
+                style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"6px", padding:"12px 14px", borderRadius:"9px", background:"#FAF8F5", border:"1px solid #EAE0D5", color:"#3B0A17", textDecoration:"none", fontSize:"11.5px", fontWeight:600, minWidth:"75px", flex: "1 1 75px", textAlign:"center", transition:"all 0.15s ease" }}
+                onMouseEnter={e => { e.currentTarget.style.background="#F3EDE5"; e.currentTarget.style.borderColor="#C9A227"; }}
+                onMouseLeave={e => { e.currentTarget.style.background="#FAF8F5"; e.currentTarget.style.borderColor="#EAE0D5"; }}
+              >
+                <span style={{ color:"#6B1A2A" }}><Icon name={qa.iconName} size={20} /></span>
+                <span style={{ whiteSpace: "nowrap" }}>{qa.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background:"#FFFFFF", borderRadius:"12px", border:"1px solid #EAE0D5", padding:"18px", boxShadow:"0 2px 8px rgba(0,0,0,0.03)" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:"8px", marginBottom:"14px" }}>
+            <Icon name="donut" size={18} />
+            <h3 style={{ margin:0, fontSize:"14.5px", fontWeight:700, color:"#2B2320" }}>Booking Status</h3>
+          </div>
+          <DonutChart
+            confirmed={stats.confirmedBookings  || 0}
+            pending={stats.pendingBookings      || 0}
+            cancelled={stats.cancelledBookings  || 0}
+            completed={stats.completedBookings  || 0}
+          />
+        </div>
+      </div>
+
+      <style>{`
+        .admin-two-col-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+
+        .admin-actions-grid {
+          display: grid;
+          grid-template-columns: 1fr 320px;
+          gap: 20px;
+          align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+          .admin-two-col-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .admin-actions-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .admin-welcome-banner {
+            padding: 14px 12px !important;
+          }
+          .admin-welcome-banner h1 {
+            font-size: 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

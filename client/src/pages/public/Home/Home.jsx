@@ -97,16 +97,39 @@ const Home = () => {
                     ))}
                   </div>
 
-                  <div className={styles.cardFooter}>
-                    <div className={styles.priceBlock}>
-                      <span className={styles.priceLabel}>Starting from</span>
-                      <div className="flex items-center gap-2">
-                        <span className="price">₹{pkg.startingPrice.toLocaleString('en-IN')}</span>
-                        <span className="price-original">₹{pkg.originalPrice.toLocaleString('en-IN')}</span>
+                  <div className={styles.cardFooter} style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '14px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+                    <div className={styles.priceBlock} style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
+                      <span style={{ fontSize: '10.5px', textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--color-neutral-400)', fontWeight: 600 }}>
+                        Starting from
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', flexWrap: 'nowrap' }}>
+                        <span className="price" style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-maroon-900)', lineHeight: 1.1 }}>
+                          ₹{pkg.startingPrice.toLocaleString('en-IN')}
+                        </span>
+                        <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                          / person
+                        </span>
                       </div>
+                      {pkg.originalPrice && (
+                        <span className="price-original" style={{ fontSize: '11.5px', color: 'var(--color-neutral-400)', textDecoration: 'line-through', lineHeight: 1 }}>
+                          ₹{pkg.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
                     </div>
-                    <Link to={ROUTES.PACKAGE_DETAIL(pkg.slug)} className="btn btn-gold btn-sm">
-                      View Details →
+                    <Link
+                      to={ROUTES.PACKAGE_DETAIL(pkg.slug)}
+                      className="btn btn-gold btn-sm"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        padding: '9px 16px',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 8px rgba(212, 167, 44, 0.35)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      View Itinerary →
                     </Link>
                   </div>
                 </div>
@@ -258,53 +281,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 6. Darshan Guidelines Banner ──────────────────────── */}
-      <section className="container">
-        <div className={styles.guidelinesBanner}>
-          <div>
-            <span className="badge badge-gold" style={{ marginBottom: '12px' }}>TTD Vedic Protocol</span>
-            <h2 style={{ fontSize: '24px', color: 'var(--color-white)', marginTop: '8px' }}>
-              Important Guidelines for Tirumala Devotees
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px', marginTop: '8px' }}>
-              Traditional dress code is strictly mandated for entering the sanctum queue complex.
-            </p>
-
-            <div className={styles.guidelinePoints}>
-              <div className={styles.guidelineItem}>
-                <span>👔</span>
-                <div>
-                  <strong>Men:</strong> White Dhoti/Kurta or Pyjama. Jeans/T-shirts strictly prohibited.
-                </div>
-              </div>
-              <div className={styles.guidelineItem}>
-                <span>🥻</span>
-                <div>
-                  <strong>Women:</strong> Saree, Half-Saree or Churidar with Dupatta properly pinned.
-                </div>
-              </div>
-              <div className={styles.guidelineItem}>
-                <span>🪪</span>
-                <div>
-                  <strong>Original ID:</strong> Original Aadhaar / Passport mandatory for entry verification.
-                </div>
-              </div>
-              <div className={styles.guidelineItem}>
-                <span>🚫</span>
-                <div>
-                  <strong>Electronics:</strong> Mobile phones &amp; smartwatches are banned inside temple queue.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <Link to={ROUTES.DARSHAN_GUIDE} className="btn btn-gold btn-lg">
-              Read Full Darshan Guide →
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ── 7. Why Choose Us ─────────────────────────────────── */}
       <section className={`section ${styles.whyUsSection}`}>

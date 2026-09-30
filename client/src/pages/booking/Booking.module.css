@@ -85,6 +85,23 @@
   box-shadow: var(--shadow-sm);
 }
 
+@media (max-width: 600px) {
+  .formCard {
+    padding: 20px 16px;
+  }
+  .stepper {
+    gap: 6px;
+    padding-inline: 8px;
+    overflow-x: auto;
+  }
+  .stepItem span:not(.stepNumber) {
+    display: none;
+  }
+  .stepDivider {
+    max-width: 20px;
+  }
+}
+
 .sidebarSummary {
   background: var(--bg-paper);
   border: 1px solid var(--border-color);

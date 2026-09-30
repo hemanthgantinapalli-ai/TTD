@@ -161,7 +161,7 @@ const AdminBookings = () => {
         </div>
 
         {/* Type & Search */}
-        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', flex: '1 1 auto' }}>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
@@ -171,6 +171,7 @@ const AdminBookings = () => {
               borderRadius: '6px',
               border: '1px solid #D8CBB8',
               background: '#fff',
+              flex: '1 1 auto',
             }}
           >
             <option value="all">All Types</option>
@@ -189,7 +190,8 @@ const AdminBookings = () => {
               fontSize: '13px',
               borderRadius: '6px',
               border: '1px solid #D8CBB8',
-              minWidth: '220px',
+              minWidth: '160px',
+              flex: '2 1 180px',
               background: '#FEFCF7',
             }}
           />

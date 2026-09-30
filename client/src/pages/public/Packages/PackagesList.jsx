@@ -98,16 +98,38 @@ const PackagesList = () => {
                   ))}
                 </div>
 
-                <div className={homeStyles.cardFooter}>
-                  <div className={homeStyles.priceBlock}>
-                    <span className={homeStyles.priceLabel}>Starting from</span>
-                    <div className="flex items-center gap-2">
-                      <span className="price">₹{pkg.startingPrice.toLocaleString('en-IN')}</span>
-                      <span className="price-original">₹{pkg.originalPrice.toLocaleString('en-IN')}</span>
-                      <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>/ person</span>
+                <div className={homeStyles.cardFooter} style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '14px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+                  <div className={homeStyles.priceBlock} style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
+                    <span style={{ fontSize: '10.5px', textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--color-neutral-400)', fontWeight: 600 }}>
+                      Starting from
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '5px', flexWrap: 'nowrap' }}>
+                      <span className="price" style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-maroon-900)', lineHeight: 1.1 }}>
+                        ₹{pkg.startingPrice.toLocaleString('en-IN')}
+                      </span>
+                      <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                        / person
+                      </span>
                     </div>
+                    {pkg.originalPrice && (
+                      <span className="price-original" style={{ fontSize: '11.5px', color: 'var(--color-neutral-400)', textDecoration: 'line-through', lineHeight: 1 }}>
+                        ₹{pkg.originalPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
                   </div>
-                  <Link to={ROUTES.PACKAGE_DETAIL(pkg.slug)} className="btn btn-gold btn-sm">
+                  <Link
+                    to={ROUTES.PACKAGE_DETAIL(pkg.slug)}
+                    className="btn btn-gold btn-sm"
+                    style={{
+                      whiteSpace: 'nowrap',
+                      padding: '9px 16px',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 8px rgba(212, 167, 44, 0.35)',
+                      flexShrink: 0,
+                    }}
+                  >
                     View Itinerary →
                   </Link>
                 </div>

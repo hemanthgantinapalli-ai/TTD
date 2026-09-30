@@ -145,16 +145,92 @@
   background: rgba(212, 167, 44, 0.12);
 }
 
-.authLinks {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.myTripsLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: #FFFFFF;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 250ms ease, background-color 250ms ease;
 }
 
-.userMenu {
+.myTripsLink:hover {
+  color: #D4A72C;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.profileMenuWrap {
+  position: relative;
+}
+
+.profileTriggerBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  padding: 4px 12px 4px 6px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(212, 167, 44, 0.35);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.profileTriggerBtn:hover {
+  background: rgba(212, 167, 44, 0.18);
+  border-color: #D4A72C;
+}
+
+.profileAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D4A72C, #F3DEA2);
+  color: #320812;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.profileName {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #FAF0F2;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileDropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 290px;
+  background: #FFFFFF;
+  color: #2B2320;
+  border-radius: 14px;
+  border: 1px solid #EAE0D5;
+  box-shadow: 0 16px 40px rgba(43, 10, 18, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+  z-index: 1000;
+  animation: profileFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .loginBtn {

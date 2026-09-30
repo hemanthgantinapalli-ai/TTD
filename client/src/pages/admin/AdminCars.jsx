@@ -151,7 +151,7 @@ const AdminCars = () => {
       </div>
 
       {/* Fleet Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '20px' }}>
         {cars.map((c) => (
           <div
             key={c.id || c.slug}
