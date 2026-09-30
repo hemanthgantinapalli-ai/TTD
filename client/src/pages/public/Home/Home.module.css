@@ -1,51 +1,53 @@
-/* ── Continuous Live Marquee Ribbon ───────────────────────── */
-.marqueeStrip {
-  background: linear-gradient(90deg, #2A0616 0%, #4A0E1C 50%, #2A0616 100%);
-  border-top: 1.5px solid rgba(243, 222, 138, 0.4);
-  border-bottom: 1.5px solid rgba(243, 222, 138, 0.4);
-  padding: 10px 0;
-  overflow: hidden;
-  white-space: nowrap;
+/* ── Hero Wrapper — contains carousel + floating widget ────── */
+.heroWrapper {
   position: relative;
-  z-index: 5;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  /* Extra bottom padding to make room for the overlapping widget */
+  padding-bottom: 90px;
+  background: #320812;
+  overflow: visible;
 }
 
-.marqueeTrack {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-  animation: marqueeScroll 38s linear infinite;
-  will-change: transform;
+.heroSection {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #320812;
 }
 
-.marqueeTrack:hover {
-  animation-play-state: paused;
+/* Floating widget container — overlaps bottom of hero */
+.widgetFloater {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  transform: translateY(50%);
+  padding: 0 24px;
 }
 
-@keyframes marqueeScroll {
-  from {
-    transform: translateX(0);
+.widgetInner {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* On small screens — widget sits below, not overlapping */
+@media (max-width: 767px) {
+  .heroWrapper {
+    padding-bottom: 0;
   }
-  to {
-    transform: translateX(-50%);
+  .widgetFloater {
+    position: relative;
+    transform: none;
+    padding: 0;
+    margin-top: -16px;
+  }
+  .widgetInner {
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
-.marqueeItem {
-  font-size: 13px;
-  font-weight: 600;
-  color: #FFF2C6;
-  letter-spacing: 0.03em;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
 
-.marqueeDot {
-  color: var(--color-gold-400);
-  font-size: 10px;
-}
 
 .hero {
   position: relative;

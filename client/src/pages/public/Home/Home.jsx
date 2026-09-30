@@ -5,7 +5,8 @@ import { ROUTES } from '../../../constants/routes';
 import { MOCK_REVIEWS, MOCK_FAQS } from '../../../data/mockData';
 import { APP_CONFIG } from '../../../config/appConfig';
 import HeroCarousel from '../../../components/home/HeroCarousel';
-import DevotionalMusicPlayer from '../../../components/audio/DevotionalMusicPlayer';
+import TravelSearchWidget from '../../../components/home/TravelSearchWidget';
+import TrustStrip from '../../../components/home/TrustStrip';
 import styles from './Home.module.css';
 import { fetchPackages } from '../../../redux/slices/packageSlice';
 import { fetchHotels } from '../../../redux/slices/hotelSlice';
@@ -14,71 +15,46 @@ import { fetchCars } from '../../../redux/slices/carSlice';
 const Home = () => {
   const dispatch = useDispatch();
   const { packages } = useSelector((state) => state.package);
-  const { hotels } = useSelector((state) => state.hotel);
-  const { cars } = useSelector((state) => state.car);
+  const { hotels }   = useSelector((state) => state.hotel);
+  const { cars }     = useSelector((state) => state.car);
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   useEffect(() => {
     if (!packages.length) dispatch(fetchPackages());
-    if (!hotels.length) dispatch(fetchHotels());
-    if (!cars.length) dispatch(fetchCars());
+    if (!hotels.length)   dispatch(fetchHotels());
+    if (!cars.length)     dispatch(fetchCars());
   }, [dispatch]);
 
-  // Fall back to mockData while loading
   const displayPackages = packages.length ? packages : [];
-  const displayHotels = hotels.length ? hotels : [];
-  const displayCars = cars.length ? cars : [];
+  const displayHotels   = hotels.length   ? hotels   : [];
+  const displayCars     = cars.length     ? cars     : [];
 
   return (
     <div className="home-page">
-      {/* ── 1. Hero — Full-width Carousel ─────────────── */}
-      <section
-        style={{
-          position: 'relative',
-          minHeight: 'clamp(600px, 85vh, 960px)',
-          overflow: 'hidden',
-        }}
-        aria-label="TTD Yatra Hero"
-      >
-        <HeroCarousel />
-      </section>
 
-      {/* ── Continuous Animated Live Marquee Ribbon ──────── */}
-      <div className={styles.marqueeStrip} aria-hidden="true">
-        <div className={styles.marqueeTrack}>
-          <span className={styles.marqueeItem}>🛕 Srivari Darshan Running Smoothly</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>⚡ Free SSD Token Offline Centers Active at Alipiri &amp; Srinivasam</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🚗 100% Hill-Certified AC Innova &amp; Sedan Fleet</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🏨 Handpicked Pure Veg Stays With 24-Hr Hot Water</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>👵 Priority Assistance for Senior Citizens &amp; Infants</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🌟 15,000+ Devotee Families Guided with Love</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>📞 24/7 Instant Tirupati Ground Helpdesk</span>
-          <span className={styles.marqueeDot}>✦</span>
-          {/* Repeated for seamless infinite loop */}
-          <span className={styles.marqueeItem}>🛕 Srivari Darshan Running Smoothly</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>⚡ Free SSD Token Offline Centers Active at Alipiri &amp; Srinivasam</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🚗 100% Hill-Certified AC Innova &amp; Sedan Fleet</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🏨 Handpicked Pure Veg Stays With 24-Hr Hot Water</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>👵 Priority Assistance for Senior Citizens &amp; Infants</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>🌟 15,000+ Devotee Families Guided with Love</span>
-          <span className={styles.marqueeDot}>✦</span>
-          <span className={styles.marqueeItem}>📞 24/7 Instant Tirupati Ground Helpdesk</span>
-          <span className={styles.marqueeDot}>✦</span>
+      {/* ── 1. Hero wrapper with floating search table widget ── */}
+      <div className={styles.heroWrapper}>
+        <section
+          className={styles.heroSection}
+          aria-label="TTD Yatra Hero"
+        >
+          <HeroCarousel />
+        </section>
+
+        {/* Floating booking search widget */}
+        <div className={styles.widgetFloater}>
+          <div className={styles.widgetInner}>
+            <TravelSearchWidget />
+          </div>
         </div>
       </div>
 
+      {/* ── 2. Trust Strip (immediately below widget) ──────── */}
+      <TrustStrip />
 
+
+
+      {/* ── 3. Featured Packages ───────────────────────────── */}
       <section className="section bg-ivory">
         <div className="container">
           <div className={styles.sectionHeader}>
@@ -146,12 +122,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 3. Top Hotels ────────────────────────────────── */}
+      {/* ── 4. Top Hotels ────────────────────────────────────── */}
       <section className="section bg-cream">
         <div className="container">
           <div className={styles.sectionHeader}>
             <span className="eyebrow">Handpicked Pilgrim Stays</span>
-            <h2 className={styles.sectionTitle}>Comfortable & Pure Veg Stays in Tirupati</h2>
+            <h2 className={styles.sectionTitle}>Comfortable &amp; Pure Veg Stays in Tirupati</h2>
             <p className={styles.sectionSubtitle}>
               Clean hygienic rooms, 24-hr hot water, proximity to temple transit hubs, and authentic South Indian dining.
             </p>
@@ -214,7 +190,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 4. Cab Fleet ─────────────────────────────────── */}
+      {/* ── 5. Cab Fleet ─────────────────────────────────────── */}
       <section className="section bg-ivory">
         <div className="container">
           <div className={styles.sectionHeader}>
@@ -282,7 +258,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 5. Darshan Guidelines Banner ──────────────────── */}
+      {/* ── 6. Darshan Guidelines Banner ──────────────────────── */}
       <section className="container">
         <div className={styles.guidelinesBanner}>
           <div>
@@ -316,7 +292,7 @@ const Home = () => {
               <div className={styles.guidelineItem}>
                 <span>🚫</span>
                 <div>
-                  <strong>Electronics:</strong> Mobile phones & smartwatches are banned inside temple queue.
+                  <strong>Electronics:</strong> Mobile phones &amp; smartwatches are banned inside temple queue.
                 </div>
               </div>
             </div>
@@ -330,7 +306,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 6. Why Choose Us ─────────────────────────────── */}
+      {/* ── 7. Why Choose Us ─────────────────────────────────── */}
       <section className={`section ${styles.whyUsSection}`}>
         <div className="container">
           <div className={styles.sectionHeader}>
@@ -357,11 +333,10 @@ const Home = () => {
             <div className={styles.whyCard}>
               <div className={styles.whyIconWrap}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                 </svg>
               </div>
-              <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--color-maroon-900)' }}>Elder & Child Friendly</h3>
+              <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--color-maroon-900)' }}>Elder &amp; Child Friendly</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 Paced itineraries with minimal walking, elevator-access hotel rooms, wheelchair assistance, and considerate driving.
               </p>
@@ -374,7 +349,7 @@ const Home = () => {
                   <path d="M7 15h0M2 9.5h20"/>
                 </svg>
               </div>
-              <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--color-maroon-900)' }}>Transparent & Honest</h3>
+              <h3 style={{ fontSize: '18px', marginBottom: '8px', color: 'var(--color-maroon-900)' }}>Transparent &amp; Honest</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 Clear pricing with no surprise taxes or surge pricing. 100% free cancellation up to 24 hours prior to travel.
               </p>
@@ -395,7 +370,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 7. Devotee Testimonials ──────────────────────── */}
+      {/* ── 8. Devotee Testimonials ──────────────────────────── */}
       <section className="section bg-ivory">
         <div className="container">
           <div className={styles.sectionHeader}>
@@ -428,7 +403,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── 8. Frequently Asked Questions ────────────────── */}
+      {/* ── 9. FAQ ────────────────────────────────────────────── */}
       <section className="section bg-cream">
         <div className="container">
           <div className={styles.sectionHeader}>
@@ -462,8 +437,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* ── Devotional Music Player (fixed, bottom-right) ─── */}
-      <DevotionalMusicPlayer />
     </div>
   );
 };

@@ -1,0 +1,187 @@
+/* ============================================================
+   DevotionalMusicFab.module.css — Small Sleek Slide Bar
+   Position: Fixed to right screen edge (right: 0), middle (top: 50%)
+   Height: 38px (Compact single-line pill)
+   Hover: Smoothly slides out to the left with Pause/Play controls
+   ============================================================ */
+
+.smallSlideBar {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  user-select: none;
+}
+
+/* ── Pill Bar Structure ──────────────────────────────────── */
+.barPill {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  background: #4B0E1D;
+  border: 1.5px solid #D4A72C;
+  border-right: none;
+  border-radius: 20px 0 0 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 167, 44, 0.25);
+  transition: background 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+  overflow: hidden;
+}
+
+.barPill:hover {
+  background: #5A1123;
+  border-color: #E5C76A;
+  box-shadow: 0 6px 22px rgba(75, 14, 29, 0.6), 0 0 16px rgba(212, 167, 44, 0.4);
+}
+
+/* ── Slide Drawer (Reveals on Hover) ─────────────────────── */
+.slideDrawer {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: max-width 300ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 240ms ease,
+              padding 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.barPill:hover .slideDrawer {
+  max-width: 320px;
+  opacity: 1;
+  padding: 0 8px 0 14px;
+}
+
+/* Song Title */
+.songLabel {
+  font-family: var(--font-display, serif);
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Pause / Play Button */
+.ctrlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 180ms ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btnPause {
+  background: #D4A72C;
+  color: #320812;
+}
+
+.btnPause:hover {
+  background: #E5C76A;
+  transform: scale(1.04);
+}
+
+.btnPlay {
+  background: #25D366;
+  color: #FFFFFF;
+}
+
+.btnPlay:hover {
+  background: #2de06e;
+  transform: scale(1.04);
+}
+
+/* Mute / Unmute Button */
+.muteBtn {
+  background: none;
+  border: none;
+  color: #D4A72C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: color 180ms ease, background 180ms ease;
+  flex-shrink: 0;
+}
+
+.muteBtn:hover {
+  color: #E5C76A;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Persistent Right Tab Handle ─────────────────────────── */
+.tabHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 42px;
+  height: 100%;
+  cursor: pointer;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 180ms ease;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.tabHandle:hover {
+  background: rgba(212, 167, 44, 0.14);
+}
+
+.omGlyph {
+  font-size: 18px;
+  font-family: 'Noto Sans', 'Cinzel', serif;
+  font-weight: 700;
+  color: #D4A72C;
+  line-height: 1;
+  text-shadow: 0 0 6px rgba(212, 167, 44, 0.6);
+  margin-top: -1px;
+}
+
+/* Mini Equalizer Waves */
+.miniWaves {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+
+.wave {
+  width: 2px;
+  height: 2px;
+  background: #D4A72C;
+  border-radius: 1px;
+  transition: height 180ms ease;
+}
+
+.wavesLive .wave:nth-child(1) {
+  animation: wavePulse 0.8s ease-in-out infinite alternate;
+}
+
+.wavesLive .wave:nth-child(2) {
+  animation: wavePulse 0.65s ease-in-out infinite alternate 0.15s;
+}
+
+.wavesLive .wave:nth-child(3) {
+  animation: wavePulse 0.9s ease-in-out infinite alternate 0.3s;
+}
+
+@keyframes wavePulse {
+  0%   { height: 2px; opacity: 0.5; }
+  100% { height: 10px; opacity: 1; }
+}

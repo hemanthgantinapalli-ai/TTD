@@ -1,0 +1,173 @@
+/* ============================================================
+   TravelSearchWidget.module.css — Floating booking search widget
+   ============================================================ */
+
+.widget {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(43, 35, 32, 0.18), 0 4px 16px rgba(43, 35, 32, 0.08);
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid rgba(224, 212, 192, 0.5);
+}
+
+/* ── Tab header ────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  border-bottom: 1.5px solid #EDE4D3;
+  background: #FAF7F2;
+}
+
+.tabBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 8px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6B615C;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+
+.tabBtn:hover:not(.tabBtnActive) {
+  color: var(--color-maroon-700);
+  background: rgba(74, 14, 28, 0.03);
+}
+
+.tabBtnActive {
+  color: #fff;
+  background: var(--color-maroon-900);
+  border-bottom-color: var(--color-gold-600);
+  font-weight: 700;
+}
+
+.tabIcon {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Form ──────────────────────────────────────────────── */
+.form {
+  padding: 20px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .form {
+    padding: 16px;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4A3F3A;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.select,
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #E0D4C0;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--text-primary);
+  background: #FEFCF7;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+  cursor: pointer;
+  height: 42px;
+  box-sizing: border-box;
+  appearance: auto;
+}
+
+.select:focus,
+.input:focus {
+  border-color: var(--color-gold-600);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.12);
+}
+
+.select::placeholder,
+.input::placeholder {
+  color: var(--color-neutral-400);
+}
+
+/* ── Search button ─────────────────────────────────────── */
+.searchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #4A0E1C 0%, #681428 100%);
+  color: #fff;
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 250ms ease;
+  box-shadow: 0 4px 16px rgba(74, 14, 28, 0.30);
+  letter-spacing: 0.02em;
+}
+
+.searchBtn:hover {
+  background: linear-gradient(135deg, #5C1224 0%, #7A1E2D 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(74, 14, 28, 0.42);
+  border-color: rgba(201, 162, 39, 0.65);
+}
+
+.searchBtn:active {
+  transform: translateY(0);
+}
+
+.btnArrow {
+  font-size: 16px;
+  transition: transform 200ms ease;
+}
+
+.searchBtn:hover .btnArrow {
+  transform: translateX(4px);
+}

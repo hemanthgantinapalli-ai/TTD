@@ -6,79 +6,93 @@ import { ROUTES } from '../../../constants/routes';
 import styles from './Navbar.module.css';
 
 const NAV_LINKS = [
-  { label: 'Home', to: ROUTES.HOME },
-  { label: 'Services', to: ROUTES.SERVICES },
+  { label: 'Home',     to: ROUTES.HOME },
   { label: 'Packages', to: ROUTES.PACKAGES },
-  { label: 'Hotels', to: ROUTES.HOTELS },
-  { label: 'Cars', to: ROUTES.CARS },
-  { label: 'About', to: ROUTES.ABOUT },
-  { label: 'Contact', to: ROUTES.CONTACT },
+  { label: 'Hotels',   to: ROUTES.HOTELS },
+  { label: 'Cars',     to: ROUTES.CARS },
+  { label: 'About',    to: ROUTES.ABOUT },
+  { label: 'Contact',  to: ROUTES.CONTACT },
 ];
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const location = useLocation();
-  const menuRef = useRef(null);
-  const { user } = useSelector((state) => state.auth);
+/* Search icon SVG */
+const SearchIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+  </svg>
+);
 
-  // Scroll listener
+/* Heart / Wishlist icon */
+const WishlistIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled]     = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const location   = useLocation();
+  const menuRef    = useRef(null);
+  const { user }   = useSelector((state) => state.auth);
+
+  /* Scroll listener for subtle elevation change */
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsMobileOpen(false);
-  }, [location.pathname]);
+  /* Close mobile menu on route change */
+  useEffect(() => { setIsMobileOpen(false); }, [location.pathname]);
 
-  // Close on outside click
+  /* Close on outside click */
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setIsMobileOpen(false);
       }
     };
-    if (isMobileOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+    if (isMobileOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMobileOpen]);
 
-  // Trap focus in mobile menu
+  /* Lock body scroll when mobile menu open */
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isMobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isMobileOpen]);
+
+  const headerClass = [
+    styles.header,
+    isScrolled ? styles.scrolled : '',
+  ].filter(Boolean).join(' ');
 
   return (
     <>
       <a href="#main-content" className="skip-nav">Skip to main content</a>
 
-      <header
-        className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}
-        role="banner"
-      >
-        <div className={`container ${styles.inner}`}>
-          {/* Logo */}
+      <header className={headerClass} role="banner">
+        <div className={styles.inner}>
+
+          {/* ── Logo ──────────────────────────────────────── */}
           <Link to={ROUTES.HOME} className={styles.logoLink} aria-label="TTDYATRA — Home">
-            <Logo size="md" variant="default" showWordmark />
+            <Logo
+              size="md"
+              variant="white"
+              showWordmark
+            />
           </Link>
 
-          {/* Desktop Nav */}
+          {/* ── Desktop Nav ──────────────────────────────── */}
           <nav className={styles.desktopNav} aria-label="Main navigation">
             {NAV_LINKS.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 className={({ isActive }) =>
-                  `link-underline ${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
                 }
                 end={link.to === '/'}
               >
@@ -87,46 +101,49 @@ const Navbar = () => {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
+          {/* ── Desktop Actions ──────────────────────────── */}
           <div className={styles.desktopActions}>
-            <Link
-              to={ROUTES.ADMIN_DASHBOARD}
-              style={{
-                fontSize: '12px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                background: 'rgba(74, 14, 28, 0.08)',
-                color: 'var(--color-maroon-900)',
-                border: '1px solid rgba(74, 14, 28, 0.2)',
-                textDecoration: 'none',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-              }}
+            {/* Search */}
+            <button
+              type="button"
+              className={styles.iconBtn}
+              aria-label="Search"
+              onClick={() => {/* future: open search modal */}}
             >
-              <span>⚙️</span> Admin Portal
+              <SearchIcon />
+            </button>
+
+            {/* Wishlist */}
+            <Link
+              to={user ? ROUTES.DASHBOARD_WISHLIST : ROUTES.LOGIN}
+              className={styles.iconBtn}
+              aria-label="Wishlist"
+            >
+              <WishlistIcon />
             </Link>
 
             {user ? (
               <div className={styles.userMenu}>
-                <Link to={ROUTES.DASHBOARD} className="btn btn-outline btn-sm">
+                <Link to={ROUTES.DASHBOARD} className={styles.loginBtn}>
                   My Trips
+                </Link>
+                <Link to={ROUTES.PACKAGES} className={styles.bookBtn}>
+                  Book Now
                 </Link>
               </div>
             ) : (
               <div className={styles.authLinks}>
-                <Link to={ROUTES.LOGIN} className="btn btn-ghost btn-sm">
-                  Sign In
+                <Link to={ROUTES.LOGIN} className={styles.loginBtn}>
+                  Login / Register
                 </Link>
-                <Link to={ROUTES.CONTACT} className="btn btn-gold btn-sm">
-                  Enquire Now
+                <Link to={ROUTES.PACKAGES} className={styles.bookBtn}>
+                  Book Now
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile hamburger */}
+          {/* ── Mobile Hamburger ─────────────────────────── */}
           <button
             type="button"
             className={styles.hamburger}
@@ -141,7 +158,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* ── Mobile Overlay ──────────────────────────────── */}
         {isMobileOpen && (
           <div
             className={styles.mobileOverlay}
@@ -149,6 +166,8 @@ const Navbar = () => {
             onClick={() => setIsMobileOpen(false)}
           />
         )}
+
+        {/* ── Mobile Menu drawer ──────────────────────────── */}
         <nav
           id="mobile-menu"
           ref={menuRef}
@@ -158,14 +177,15 @@ const Navbar = () => {
         >
           <div className={styles.mobileMenuInner}>
             <div className={styles.mobileMenuHeader}>
-              <Logo size="sm" variant="default" showWordmark />
+              <Logo size="sm" variant="white" showWordmark />
               <button
                 type="button"
                 className={styles.closeBtn}
                 onClick={() => setIsMobileOpen(false)}
                 aria-label="Close menu"
               >
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                  stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
@@ -188,20 +208,17 @@ const Navbar = () => {
             </ul>
 
             <div className={styles.mobileActions}>
-              <Link to={ROUTES.ADMIN_DASHBOARD} className="btn btn-outline" style={{ width: '100%', borderColor: 'var(--color-maroon-900)', color: 'var(--color-maroon-900)', fontWeight: 600 }}>
-                ⚙️ Admin Portal (All Terms & Controls)
-              </Link>
               {user ? (
-                <Link to={ROUTES.DASHBOARD} className="btn btn-maroon" style={{ width: '100%' }}>
+                <Link to={ROUTES.DASHBOARD} className="btn btn-outline" style={{ width: '100%' }}>
                   My Dashboard
                 </Link>
               ) : (
                 <>
                   <Link to={ROUTES.LOGIN} className="btn btn-outline" style={{ width: '100%' }}>
-                    Sign In
+                    Login / Register
                   </Link>
-                  <Link to={ROUTES.REGISTER} className="btn btn-gold" style={{ width: '100%' }}>
-                    Create Account
+                  <Link to={ROUTES.PACKAGES} className="btn btn-gold" style={{ width: '100%' }}>
+                    Book Now
                   </Link>
                 </>
               )}
@@ -212,7 +229,8 @@ const Navbar = () => {
                 className="btn btn-ghost"
                 style={{ width: '100%', color: '#25D366' }}
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+                  stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 20l1.3-3.8A8 8 0 1 1 8 19z" />
                   <path d="M9.2 8.6c.2-.5.4-.5.7-.5h.5c.2 0 .4 0 .6.5l.6 1.4c.1.2 0 .4-.1.6l-.5.5c-.1.2-.2.3 0 .6a6 6 0 0 0 2.4 2.1c.3.2.4.1.6 0l.6-.7c.2-.2.3-.2.6-.1l1.3.7c.2.1.3.2.3.3 0 .5-.6 1.4-1 1.5-.7.3-1.6.3-3.6-.7a9 9 0 0 1-3.4-3.4c-.7-1.4-.5-2.3-.2-2.9z" />
                 </svg>

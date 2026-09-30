@@ -138,7 +138,7 @@
   /* ── Layout ───────────────────────────────────────────── */
   --max-w-content: 1140px;
   --max-w-wide: 1320px;
-  --header-height: 72px;
+  --header-height: 78px;
   --admin-sidebar-w: 260px;
   --admin-sidebar-collapsed: 72px;
 
@@ -171,4 +171,11 @@
   --text-body-sm: 16px;
   --text-h3: 22px;
   font-size: 18px;
+}
+
+/* ── Mobile Header Height ──────────────────────────────── */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 68px;
+  }
 }
