@@ -1,7 +1,14 @@
 import express from 'express';
 import { getHealth } from '../controllers/healthController.js';
+import adminAuth from './adminAuth.js';
+import userAuth from './userAuth.js';
+import { authenticate, requireAdmin } from '../middleware/authenticate.js';
 
 const router = express.Router();
+
+router.use('/auth/admin', adminAuth);
+router.use('/auth', userAuth);
+router.use('/admin', authenticate, requireAdmin);
 
 // ─── Full Rich Dataset ────────────────────────────────────────────────────────
 
@@ -744,13 +751,7 @@ router.get('/admin/overview', (req, res) => {
       },
       recentBookings: BOOKINGS.slice(0, 5),
       recentEnquiries: ENQUIRIES.slice(0, 5),
-      monthlyRevenue: [
-        { month: 'May', revenue: 145000, bookings: 32 },
-        { month: 'Jun', revenue: 182000, bookings: 44 },
-        { month: 'Jul', revenue: 210000, bookings: 51 },
-        { month: 'Aug', revenue: 275000, bookings: 68 },
-        { month: 'Sep', revenue: 340000, bookings: 86 }
-      ]
+      monthlyRevenue: []
     }
   });
 });
@@ -1026,26 +1027,6 @@ router.post('/auth/register', (req, res) => {
   });
 });
 
-router.post('/auth/login', (req, res) => {
-  const email = req.body.email || '';
-  const isAdmin = email.toLowerCase().includes('admin') || req.body.isAdmin;
-  const user = {
-    _id: isAdmin ? 'usr_admin' : 'usr_101',
-    name: isAdmin ? 'Administrator Desk' : 'Venkatesh Prasad',
-    email: req.body.email || (isAdmin ? 'admin@ttdyatra.com' : 'devotee@ttdyatra.com'),
-    phone: req.body.phone || (isAdmin ? '+91 91483 91081' : '+91 98765 43210'),
-    role: isAdmin ? 'admin' : 'devotee',
-    avatar: null
-  };
-  res.json({
-    success: true,
-    data: {
-      user,
-      accessToken: 'jwt_mock_token_ttdyatra'
-    }
-  });
-});
-
 router.post('/auth/send-otp', (req, res) => {
   res.json({ success: true, message: 'OTP sent successfully', data: { otpSent: true } });
 });
@@ -1064,21 +1045,8 @@ router.post('/auth/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
-router.get('/auth/me', (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'Unauthorized' });
-  }
-  res.json({
-    success: true,
-    data: {
-      _id: 'usr_101',
-      name: 'Venkatesh Prasad',
-      email: 'devotee@ttdyatra.com',
-      phone: '+91 98765 43210',
-      role: 'devotee'
-    }
-  });
+router.get('/auth/me', authenticate, (req, res) => {
+  res.json({ success: true, data: req.user.toJSON() });
 });
 
 // ─── Contact / Enquiry ────────────────────────────────────────────────────────

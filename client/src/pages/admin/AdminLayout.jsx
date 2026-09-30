@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearCredentials, logout } from '../../redux/slices/authSlice';
 import { ROUTES } from '../../constants/routes';
-import Logo from '../../components/common/Logo/Logo';
 
 const ADMIN_LINKS = [
   { label: 'Overview', to: ROUTES.ADMIN_DASHBOARD, icon: '📊' },
@@ -17,8 +18,21 @@ const ADMIN_LINKS = [
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const adminName = user?.name || user?.email || 'Administrator';
+  const initials = adminName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+    } catch {
+      // The client session is cleared even if the server logout request fails.
+    }
+    dispatch(clearCredentials());
+    navigate(ROUTES.ADMIN_LOGIN, { replace: true });
+  };
 
   return (
     <div className="admin-root" style={{ display: 'flex', minHeight: '100vh', background: '#F8F6F0', color: '#2B2320', fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -114,11 +128,11 @@ const AdminLayout = () => {
         <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#E3C05C', color: '#4A0E1C', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '15px' }}>
-              SA
+              {initials}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#FDF6E3', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                Sri Venkateswara Admin
+                {adminName}
               </div>
               <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
                 Master Access
@@ -143,6 +157,9 @@ const AdminLayout = () => {
             >
               Public Site ↗
             </Link>
+            <button type="button" onClick={handleLogout} style={{ flex: 1, padding: '6px 10px', fontSize: '11px', borderRadius: '6px', background: 'transparent', color: '#fff', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.2)' }}>
+              Logout
+            </button>
           </div>
         </div>
       </aside>

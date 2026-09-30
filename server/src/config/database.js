@@ -7,8 +7,10 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 10000,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return true;
   } catch (error) {
     console.warn(`[Warning] MongoDB not reachable (${error.message}). Running in-memory / mock mode for development.`);
+    return false;
   }
 
 };

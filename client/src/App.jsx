@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,9 +64,20 @@ import AdminCars from './pages/admin/AdminCars';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminEnquiries from './pages/admin/AdminEnquiries';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminLogin from './pages/admin/AdminLogin';
 
 // Actions
 import { getMe, setInitialized } from './redux/slices/authSlice';
+
+const ProtectedAdminRoute = ({ children }) => {
+  const { isInitialized, user } = useSelector((state) => state.auth);
+  const location = useLocation();
+
+  if (!isInitialized) return null;
+  if (!user) return <Navigate to={ROUTES.ADMIN_LOGIN} state={{ from: location }} replace />;
+  if (user.role !== 'admin') return <Navigate to={ROUTES.DASHBOARD} replace />;
+  return children;
+};
 
 function App() {
   const dispatch = useDispatch();
@@ -105,8 +116,9 @@ function App() {
         <Toaster position="top-center" toastOptions={{ duration: 3500 }} />
         
         <Routes>
+          <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
           {/* Admin Master Portal */}
-          <Route path={ROUTES.ADMIN} element={<AdminLayout />}>
+          <Route path={ROUTES.ADMIN} element={<ProtectedAdminRoute><AdminLayout /></ProtectedAdminRoute>}>
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="terms" element={<AdminTerms />} />

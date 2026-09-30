@@ -1,0 +1,46 @@
+import { Router } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
+import User from '../models/User.js';
+
+const router = Router();
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many login attempts. Try again later.' },
+});
+
+router.post('/login', loginLimiter, async (req, res, next) => {
+  try {
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const password = typeof req.body.password === 'string' ? req.body.password : '';
+    if (!/^\S+@\S+\.\S+$/.test(email) || !password) {
+      return res.status(400).json({ success: false, message: 'Enter a valid email and password' });
+    }
+    if (!process.env.JWT_SECRET) {
+      return res.status(503).json({ success: false, message: 'Authentication is not configured' });
+    }
+
+    const user = await User.findOne({ email }).select('+passwordHash');
+    if (!user || !await bcrypt.compare(password, user.passwordHash) || !user.isActive) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+    if (user.role !== 'user') {
+      return res.status(403).json({ success: false, message: 'Use the dedicated admin sign-in' });
+    }
+
+    const accessToken = jwt.sign(
+      { id: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_ACCESS_EXPIRY || '15m' },
+    );
+    return res.json({ success: true, data: { user: user.toJSON(), accessToken } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default router;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { setCredentials } from '../../../redux/slices/authSlice';
+import { login } from '../../../redux/slices/authSlice';
 import { ROUTES } from '../../../constants/routes';
 import Logo from '../../../components/common/Logo/Logo';
 import styles from './Auth.module.css';
@@ -20,23 +20,6 @@ const Login = () => {
 
   const redirectPath = location.state?.from || ROUTES.HOME;
 
-  // 1-Click Demo Login
-  const handleDemoLogin = (role = 'devotee') => {
-    const demoUser = {
-      _id: 'usr_demo_101',
-      name: role === 'admin' ? 'Srinivasa Rao (Admin)' : 'Venkatesh Prasad',
-      email: role === 'admin' ? 'admin@ttdyatra.com' : 'venkatesh@gmail.com',
-      phone: '+91 98765 43210',
-      role: role,
-    };
-    dispatch(setCredentials({
-      user: demoUser,
-      accessToken: 'demo_token_valid_jwt',
-    }));
-    toast.success(`Signed in successfully as ${demoUser.name}`);
-    navigate(role === 'admin' ? ROUTES.ADMIN_DASHBOARD : redirectPath);
-  };
-
   const handleSendOtp = (e) => {
     e.preventDefault();
     if (!phone || phone.length < 10) {
@@ -53,7 +36,13 @@ const Login = () => {
       toast.error('Please enter your email and password');
       return;
     }
-    handleDemoLogin('devotee');
+    dispatch(login({ email, password }))
+      .unwrap()
+      .then(({ user }) => {
+        toast.success('Signed in successfully');
+        navigate(user?.role === 'admin' ? ROUTES.ADMIN_DASHBOARD : redirectPath);
+      })
+      .catch((error) => toast.error(error));
   };
 
   return (
@@ -63,20 +52,6 @@ const Login = () => {
           <Logo size="md" variant="default" showWordmark />
           <h1 className={styles.authTitle}>Sign In to TTD Yatra</h1>
           <p className={styles.authSubtitle}>Access your pilgrimage bookings, itinerary & vouchers</p>
-        </div>
-
-        {/* Demo Login Shortcut */}
-        <div className={styles.demoBanner}>
-          <div className={styles.demoText}>
-            <strong>Test Devotee Account:</strong> 1-Click Instant Demo Login
-          </div>
-          <button
-            type="button"
-            className="btn btn-gold btn-sm"
-            onClick={() => handleDemoLogin('devotee')}
-          >
-            Quick Sign In
-          </button>
         </div>
 
         {/* Tab switch */}
@@ -160,8 +135,8 @@ const Login = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', marginTop: '8px' }}>
-              Sign In →
+            <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', marginTop: '8px' }} disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In →'}
             </button>
           </form>
         )}

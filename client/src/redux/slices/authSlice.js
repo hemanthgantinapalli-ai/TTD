@@ -18,6 +18,14 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   }
 });
 
+export const loginAdmin = createAsyncThunk('auth/loginAdmin', async (credentials, { rejectWithValue }) => {
+  try {
+    return await authService.adminLogin(credentials);
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Unable to connect to server');
+  }
+});
+
 export const verifyOtp = createAsyncThunk('auth/verifyOtp', async (otpData, { rejectWithValue }) => {
   try {
     return await authService.verifyOtp(otpData);
@@ -82,6 +90,13 @@ const authSlice = createSlice({
       localStorage.setItem('ttdyatra_user', JSON.stringify(user));
       localStorage.setItem('ttdyatra_token', accessToken);
     },
+    clearCredentials: (state) => {
+      state.user = null;
+      state.accessToken = null;
+      state.isInitialized = true;
+      localStorage.removeItem('ttdyatra_user');
+      localStorage.removeItem('ttdyatra_token');
+    },
     clearError: (state) => {
       state.error = null;
     },
@@ -101,7 +116,7 @@ const authSlice = createSlice({
     // Register
     builder
       .addCase(register.pending, (state) => { state.isLoading = true; state.error = null; })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(register.fulfilled, (state) => {
         state.isLoading = false;
         state.otpSent = true;
       })
@@ -121,6 +136,22 @@ const authSlice = createSlice({
         localStorage.setItem('ttdyatra_token', action.payload.accessToken);
       })
       .addCase(login.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
+
+    // Admin login
+    builder
+      .addCase(loginAdmin.pending, (state) => { state.isLoading = true; state.error = null; })
+      .addCase(loginAdmin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.isInitialized = true;
+        localStorage.setItem('ttdyatra_user', JSON.stringify(action.payload.user));
+        localStorage.setItem('ttdyatra_token', action.payload.accessToken);
+      })
+      .addCase(loginAdmin.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });
@@ -174,5 +205,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, clearError, clearOtpState, setInitialized, updateUser } = authSlice.actions;
+export const { setCredentials, clearCredentials, clearError, clearOtpState, setInitialized, updateUser } = authSlice.actions;
 export default authSlice.reducer;

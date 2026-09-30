@@ -1,12 +1,14 @@
 import 'dotenv/config';
 import app from './app.js';
 import connectDB from './config/database.js';
+import seedAdmin from './scripts/seedAdmin.js';
 
 const PORT = process.env.PORT || 5000;
 
 
 // Connect to Database
-connectDB().then(() => {
+connectDB().then(async (connected) => {
+  if (connected) await seedAdmin();
   // Start server only after DB connection
   app.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

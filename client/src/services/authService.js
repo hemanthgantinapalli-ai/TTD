@@ -7,7 +7,15 @@ const authService = {
   },
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
-    return response.data;
+    return response.data.data || response.data;
+  },
+  adminLogin: async (credentials) => {
+    const response = await api.post('/auth/admin/login', credentials);
+    return response.data.data;
+  },
+  getAdminMe: async () => {
+    const response = await api.get('/auth/admin/me');
+    return response.data.data;
   },
   sendOtp: async (phoneData) => {
     const response = await api.post('/auth/send-otp', phoneData);
@@ -23,7 +31,7 @@ const authService = {
   },
   getMe: async () => {
     const response = await api.get('/auth/me');
-    return response.data;
+    return response.data.data;
   },
 };
 

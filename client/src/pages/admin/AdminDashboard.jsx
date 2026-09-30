@@ -6,48 +6,39 @@ import { ROUTES } from '../../constants/routes';
 
 const AdminDashboard = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [overviewError, setOverviewError] = useState(false);
+
+  async function loadOverview() {
+    try {
+      const res = await adminService.getOverview();
+      if (res?.data) {
+        setData(res.data);
+        setOverviewError(false);
+      } else {
+        setOverviewError(true);
+      }
+    } catch {
+      console.warn('Error loading admin overview');
+      setOverviewError(true);
+    }
+  }
 
   useEffect(() => {
     loadOverview();
   }, []);
-
-  const loadOverview = async () => {
-    try {
-      setLoading(true);
-      const res = await adminService.getOverview();
-      if (res?.data) {
-        setData(res.data);
-      }
-    } catch (err) {
-      console.warn('Error loading admin overview:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleQuickStatusChange = async (bookingId, newStatus) => {
     try {
       await adminService.updateBookingStatus(bookingId, newStatus);
       toast.success(`Booking status updated to ${newStatus}`);
       loadOverview();
-    } catch (err) {
+    } catch {
       toast.error('Failed to update status');
     }
   };
 
-  const stats = data?.stats || {
-    totalRevenue: 298798,
-    totalBookings: 6,
-    confirmedBookings: 4,
-    pendingBookings: 1,
-    completedBookings: 1,
-    totalDevotees: 5,
-    hotelsCount: 6,
-    carsCount: 4,
-    packagesCount: 3,
-    openEnquiries: 2,
-  };
+  const stats = data?.stats || {};
+  const unavailableValue = !data && !overviewError ? '...' : '—';
 
   const recentBookings = data?.recentBookings || [];
   const recentEnquiries = data?.recentEnquiries || [];
@@ -55,6 +46,11 @@ const AdminDashboard = () => {
 
   return (
     <div>
+      {overviewError && (
+        <p role="alert" style={{ margin: '0 0 18px', padding: '12px 16px', border: '1px solid #e8c7a6', borderRadius: '6px', background: '#fff6eb', color: '#75410d', fontSize: '13px' }}>
+          Dashboard metrics are unavailable. No values are being shown until the overview service responds.
+        </p>
+      )}
       {/* Welcome Banner */}
       <div
         style={{
@@ -135,10 +131,10 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>💰</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            ₹{stats.totalRevenue?.toLocaleString('en-IN')}
+            {stats.totalRevenue == null ? unavailableValue : `₹${stats.totalRevenue.toLocaleString('en-IN')}`}
           </div>
           <div style={{ fontSize: '11px', color: '#2E7D46', fontWeight: 600, marginTop: '6px' }}>
-            ↑ 22.4% vs last month
+            {stats.totalRevenue == null ? 'Awaiting current revenue data' : 'Current recorded revenue'}
           </div>
         </div>
 
@@ -149,10 +145,10 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>🎟️</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.totalBookings}
+            {stats.totalBookings ?? unavailableValue}
           </div>
           <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            <strong style={{ color: '#2E7D46' }}>{stats.confirmedBookings} Confirmed</strong> • {stats.pendingBookings} Pending
+            <strong style={{ color: '#2E7D46' }}>{stats.confirmedBookings ?? unavailableValue} Confirmed</strong> • {stats.pendingBookings ?? unavailableValue} Pending
           </div>
         </div>
 
@@ -163,10 +159,10 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>📦</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.packagesCount} Active
+            {stats.packagesCount == null ? unavailableValue : `${stats.packagesCount} Active`}
           </div>
           <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            VIP Break, 2-Day, Senior Citizen
+            Active platform packages
           </div>
         </div>
 
@@ -177,10 +173,10 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>🏨</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.hotelsCount} Verified
+            {stats.hotelsCount == null ? unavailableValue : `${stats.hotelsCount} Partner stays`}
           </div>
           <div style={{ fontSize: '11px', color: '#B97A00', fontWeight: 600, marginTop: '6px' }}>
-            Pure Vegetarian & Luxury Stays
+            Current stay inventory
           </div>
         </div>
 
@@ -191,10 +187,10 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>🚗</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#4A0E1C', marginTop: '8px' }}>
-            {stats.carsCount} Vehicles
+            {stats.carsCount == null ? unavailableValue : `${stats.carsCount} Vehicles`}
           </div>
           <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
-            100% Ghat-road certified drivers
+            Current fleet inventory
           </div>
         </div>
 
@@ -205,7 +201,7 @@ const AdminDashboard = () => {
             <span style={{ fontSize: '20px' }}>📩</span>
           </div>
           <div style={{ fontSize: '24px', fontWeight: 800, color: stats.openEnquiries > 0 ? '#C96412' : '#2E7D46', marginTop: '8px' }}>
-            {stats.openEnquiries} New
+            {stats.openEnquiries == null ? unavailableValue : `${stats.openEnquiries} New`}
           </div>
           <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '6px' }}>
             Trip assistance & custom quotes
@@ -225,7 +221,7 @@ const AdminDashboard = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {monthlyRevenue.map((item) => (
+            {monthlyRevenue.length ? monthlyRevenue.map((item) => (
               <div key={item.month}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', marginBottom: '4px' }}>
                   <span style={{ fontWeight: 600, color: '#4A3F3A' }}>{item.month} 2026</span>
@@ -244,13 +240,13 @@ const AdminDashboard = () => {
                   />
                 </div>
               </div>
-            ))}
+            )) : (
+              <p style={{ margin: 0, padding: '28px 12px', color: '#6B615C', fontSize: '13px', textAlign: 'center' }}>
+                No booking or payment history is available for this period.
+              </p>
+            )}
           </div>
 
-          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #E5DFD5', display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#6B615C' }}>
-            <div>Avg Booking Value: <strong>₹3,950</strong></div>
-            <div>Repeat Devotees: <strong>41%</strong></div>
-          </div>
         </div>
 
         {/* Quick Management Shortcuts */}
