@@ -31,6 +31,7 @@ import {
 } from '../controllers/vehicleController.js';
 
 import {
+  createBooking,
   adminGetAllBookings,
   adminGetBookingById,
   adminUpdateBookingStatus,
@@ -99,7 +100,9 @@ router.delete('/cars/:id', adminDeleteVehicle);
 
 // Bookings Ledger
 router.get('/bookings', adminGetAllBookings);
+router.post('/bookings', createBooking);
 router.get('/bookings/:id', adminGetBookingById);
+router.put('/bookings/:id', adminUpdateBookingStatus);
 router.put('/bookings/:id/status', adminUpdateBookingStatus);
 router.delete('/bookings/:id', adminDeleteBooking);
 

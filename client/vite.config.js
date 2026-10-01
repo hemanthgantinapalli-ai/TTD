@@ -5,5 +5,13 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.mpeg', '**/*.mp3', '**/*.wav', '**/*.ogg'],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
 
