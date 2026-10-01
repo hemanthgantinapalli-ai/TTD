@@ -121,7 +121,7 @@ const DarshanGuide = () => {
               Explore Pilgrimage Packages
             </Link>
             <a
-              href="https://wa.me/919148391081"
+              href="https://wa.me/918143311880"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline"

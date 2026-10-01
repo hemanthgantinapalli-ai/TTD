@@ -150,7 +150,7 @@ const PackageDetail = () => {
               <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                 Have questions before booking?{' '}
                 <a
-                  href="https://wa.me/919148391081"
+                  href="https://wa.me/918143311880"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: '#25D366', fontWeight: 600 }}

@@ -11,7 +11,8 @@ const NAV_LINKS = [
   { label: 'Packages', to: ROUTES.PACKAGES },
   { label: 'Hotels',   to: ROUTES.HOTELS },
   { label: 'Cars',     to: ROUTES.CARS },
-  { label: 'About',    to: ROUTES.ABOUT },
+  { label: 'About Us', to: ROUTES.ABOUT },
+  { label: 'Blog',     to: ROUTES.BLOG },
   { label: 'Contact',  to: ROUTES.CONTACT },
 ];
 
@@ -74,6 +75,21 @@ const Navbar = () => {
     return () => { document.body.style.overflow = ''; };
   }, [isMobileOpen]);
 
+  const isLinkActive = (linkTo) => {
+    if (linkTo === ROUTES.HOME) {
+      return location.pathname === '/';
+    }
+    if (linkTo === ROUTES.BLOG || linkTo === '/blog') {
+      return (
+        location.pathname === '/blog' ||
+        location.pathname.startsWith('/blog/') ||
+        location.pathname === '/blogs' ||
+        location.pathname.startsWith('/blogs/')
+      );
+    }
+    return location.pathname === linkTo || location.pathname.startsWith(`${linkTo}/`);
+  };
+
   const headerClass = [
     styles.header,
     isScrolled ? styles.scrolled : '',
@@ -97,18 +113,19 @@ const Navbar = () => {
 
           {/* ── Desktop Nav ──────────────────────────────── */}
           <nav className={styles.desktopNav} aria-label="Main navigation">
-            {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
-                }
-                end={link.to === '/'}
-              >
-                {link.label}
-              </NavLink>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const active = isLinkActive(link.to);
+              return (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className={`${styles.navLink} ${active ? styles.navLinkActive : ''}`}
+                  end={link.to === '/'}
+                >
+                  {link.label}
+                </NavLink>
+              );
+            })}
           </nav>
 
           {/* ── Desktop Actions ──────────────────────────── */}
@@ -325,20 +342,25 @@ const Navbar = () => {
             </div>
 
             <ul className={styles.mobileNavList} role="list">
-              {NAV_LINKS.map((link) => (
-                <li key={link.to}>
-                  <NavLink
-                    to={link.to}
-                    className={({ isActive }) =>
-                      `${styles.mobileNavLink} ${isActive ? styles.mobileNavLinkActive : ''}`
-                    }
-                    end={link.to === '/'}
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const active = isLinkActive(link.to);
+                return (
+                  <li key={link.to}>
+                    <NavLink
+                      to={link.to}
+                      className={`${styles.mobileNavLink} ${active ? styles.mobileNavLinkActive : ''}`}
+                      end={link.to === '/'}
+                      onClick={() => setIsMobileOpen(false)}
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                );
+              })}
             </ul>
+
+            {/* Separator */}
+            <div style={{ height: '1px', background: 'rgba(255,255,255,0.12)', margin: '14px 0' }} />
 
             <div className={styles.mobileActions}>
               {user ? (
@@ -347,8 +369,11 @@ const Navbar = () => {
                     <div style={{ fontWeight: 700, fontSize: '14px', color: '#F2DEA2' }}>{user.name || 'Devotee Pilgrim'}</div>
                     <div style={{ fontSize: '11.5px', color: 'rgba(255,255,255,0.7)', marginTop: '2px' }}>{user.email}</div>
                   </div>
-                  <Link to={ROUTES.DASHBOARD_BOOKINGS} className="btn btn-outline" style={{ width: '100%' }}>
+                  <Link to={ROUTES.DASHBOARD_BOOKINGS} className="btn btn-outline" style={{ width: '100%' }} onClick={() => setIsMobileOpen(false)}>
                     My Trips &amp; Bookings
+                  </Link>
+                  <Link to={ROUTES.PACKAGES} className="btn btn-gold" style={{ width: '100%' }} onClick={() => setIsMobileOpen(false)}>
+                    Book Now
                   </Link>
                   <button type="button" onClick={handleLogout} className="btn btn-ghost" style={{ width: '100%', color: '#E3514F' }}>
                     Sign Out
@@ -356,16 +381,19 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link to={ROUTES.LOGIN} className="btn btn-outline" style={{ width: '100%' }}>
-                    Login / Register
+                  <Link to={ROUTES.DASHBOARD_BOOKINGS} className="btn btn-outline" style={{ width: '100%' }} onClick={() => setIsMobileOpen(false)}>
+                    My Trips
                   </Link>
-                  <Link to={ROUTES.PACKAGES} className="btn btn-gold" style={{ width: '100%' }}>
+                  <Link to={ROUTES.LOGIN} className="btn btn-outline" style={{ width: '100%' }} onClick={() => setIsMobileOpen(false)}>
+                    Login
+                  </Link>
+                  <Link to={ROUTES.PACKAGES} className="btn btn-gold" style={{ width: '100%' }} onClick={() => setIsMobileOpen(false)}>
                     Book Now
                   </Link>
                 </>
               )}
               <a
-                href="https://wa.me/919148391081"
+                href={APP_CONFIG.contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-ghost"
