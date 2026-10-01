@@ -10,6 +10,9 @@ dotenv.config();
 
 const app = express();
 
+// Enable trust proxy for reverse proxies like Vercel and Heroku
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet());
 app.use(cors({
