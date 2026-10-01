@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { adminService } from '../../services/adminService';
+import ImageInputPreview from '../../components/common/ImageInputPreview';
 
 const AdminHotels = () => {
   const [hotels, setHotels] = useState([]);
@@ -97,6 +98,8 @@ const AdminHotels = () => {
     e.preventDefault();
     const payload = {
       ...formData,
+      thumbnail: formData.thumbnail,
+      images: formData.thumbnail ? [formData.thumbnail] : [],
       amenities: formData.amenities.split('\n').filter(Boolean),
     };
 
@@ -385,17 +388,12 @@ const AdminHotels = () => {
                 />
               </div>
 
-              <div>
-                <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
-                  Thumbnail Image URL
-                </label>
-                <input
-                  type="text"
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', fontSize: '13px', border: '1px solid #D8CBB8', borderRadius: '6px' }}
-                />
-              </div>
+              <ImageInputPreview
+                label="Hotel Photo / Thumbnail"
+                value={formData.thumbnail}
+                onChange={(url) => setFormData({ ...formData, thumbnail: url })}
+                helperText="Paste a direct image URL or upload an image file of the hotel property."
+              />
 
               <div style={{ display: 'flex', gap: '20px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer', fontWeight: 600, color: '#2E7D46' }}>
