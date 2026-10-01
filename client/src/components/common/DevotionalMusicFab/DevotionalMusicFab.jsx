@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './DevotionalMusicFab.module.css';
 import devotionalAudioSrc from '../../../assets/audio/devotional-music.mp3';
 
-const MUSIC_PREF_KEY = 'ttdyatra_devotional_music_enabled';
-
 /* ── SVG Icons ───────────────────────────────────────────── */
 const PlayIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
@@ -36,17 +34,34 @@ const VolumeXIcon = () => (
 
 /* 
  * Global Audio Singleton
- * Prevents React StrictMode, HMR, or re-renders from creating multiple duplicate background tracks
+ * Ensures seamless infinite playback ("unlimitedly") without duplicate tracks
  */
 let sharedAudioInstance = null;
 
 function getSharedAudio() {
   if (typeof window === 'undefined') return null;
   if (!sharedAudioInstance) {
-    const audio = new Audio(devotionalAudioSrc || '/audio/devotional-music.mp3');
+    const src = devotionalAudioSrc || '/audio/devotional-music.mp3';
+    const audio = new Audio(src);
     audio.loop = true;
     audio.preload = 'auto';
     audio.volume = 0.75;
+
+    // Fallback if bundled asset path ever needs static fallback
+    audio.addEventListener('error', () => {
+      if (!audio.src.endsWith('/audio/devotional-music.mp3')) {
+        audio.src = '/audio/devotional-music.mp3';
+        audio.load();
+        audio.play().catch(() => {});
+      }
+    });
+
+    // Guaranteed infinite continuous loop ("unlimitedly")
+    audio.addEventListener('ended', () => {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    });
+
     sharedAudioInstance = audio;
   }
   return sharedAudioInstance;
@@ -61,13 +76,10 @@ const DevotionalMusicFab = () => {
   const [volume, setVolume] = useState(0.75);
 
   /* 
-   * Stop ALL audio instances currently playing on the page
+   * Stop ALL audio instances immediately when devotee clicks Pause
    */
   const stopAllAudio = useCallback(() => {
     userPausedRef.current = true;
-    try {
-      localStorage.setItem(MUSIC_PREF_KEY, 'false');
-    } catch (_) {}
 
     // 1. Pause shared singleton
     if (sharedAudioInstance) {
@@ -76,7 +88,7 @@ const DevotionalMusicFab = () => {
       } catch (_) {}
     }
 
-    // 2. Pause any DOM audio tags that might have been left over
+    // 2. Pause any other potential audio elements
     if (typeof document !== 'undefined') {
       document.querySelectorAll('audio').forEach((el) => {
         try {
@@ -119,83 +131,74 @@ const DevotionalMusicFab = () => {
   }, []);
 
   /* 
-   * 2. Autoplay on mount + graceful unmuting on devotee gesture
+   * 2. Automatic song playback on visit + infinite continuous loop ("unlimitedly")
    */
   useEffect(() => {
     const audio = getSharedAudio();
     if (!audio) return;
 
-    // If devotee previously turned music off, strictly respect it
-    const savedPref = localStorage.getItem(MUSIC_PREF_KEY);
-    if (savedPref === 'false') {
-      userPausedRef.current = true;
-      audio.pause();
-      setIsPlaying(false);
-      return;
-    }
+    // Reset userPaused on visit so the devotional song automatically plays
+    userPausedRef.current = false;
+    audio.loop = true;
+    audio.volume = volume;
 
-    // Attempt unmuted play, fallback to muted if blocked
+    // Immediate attempt to play audio with sound
     const startAudio = async () => {
-      if (userPausedRef.current) return;
-
       try {
         audio.muted = false;
         await audio.play();
         setIsPlaying(true);
         setIsMuted(false);
       } catch (err) {
-        // Autoplay with sound blocked -> try muted
+        // Browser requires initial user gesture for unmuted sound -> start playing muted immediately
         try {
-          if (!userPausedRef.current) {
-            audio.muted = true;
-            await audio.play();
-            setIsPlaying(true);
-            setIsMuted(true);
-          }
+          audio.muted = true;
+          await audio.play();
+          setIsPlaying(true);
+          setIsMuted(true);
         } catch (_) {}
       }
     };
 
     startAudio();
 
-    // Devotee first interaction listener: smooth unmute on first click/scroll/touch
-    const handleFirstGesture = (e) => {
-      // If user clicked inside the music control itself, ignore
+    // Devotee first gesture anywhere on the site (scroll, click, touch): immediately unmute sound
+    const handleGesture = (e) => {
+      // If user clicked inside the widget itself, do not interfere with controls
       if (containerRef.current && containerRef.current.contains(e.target)) {
         return;
       }
 
-      cleanupGestureListeners();
+      removeGestureListeners();
 
-      // If user paused, never resume
-      if (userPausedRef.current || localStorage.getItem(MUSIC_PREF_KEY) === 'false') {
-        return;
-      }
+      if (userPausedRef.current) return;
 
       const currentAudio = getSharedAudio();
       if (currentAudio && !userPausedRef.current) {
         currentAudio.muted = false;
-        setIsMuted(false);
+        currentAudio.volume = volume > 0 ? volume : 0.75;
         if (currentAudio.paused) {
           currentAudio.play().catch(() => {});
         }
+        setIsMuted(false);
+        setIsPlaying(true);
       }
     };
 
-    const events = ['click', 'keydown', 'scroll', 'touchstart', 'pointerdown'];
-    const cleanupGestureListeners = () => {
-      events.forEach((ev) => window.removeEventListener(ev, handleFirstGesture, true));
+    const events = ['click', 'pointerdown', 'touchstart', 'scroll', 'wheel', 'keydown'];
+    const removeGestureListeners = () => {
+      events.forEach((ev) => window.removeEventListener(ev, handleGesture, true));
     };
 
-    events.forEach((ev) => window.addEventListener(ev, handleFirstGesture, true));
+    events.forEach((ev) => window.addEventListener(ev, handleGesture, true));
 
     return () => {
-      cleanupGestureListeners();
+      removeGestureListeners();
     };
-  }, []);
+  }, [volume]);
 
   /* 
-   * 3. Toggle Play / Pause: guaranteed immediate pause
+   * 3. Toggle Play / Pause: guaranteed immediate pause or resume
    */
   const togglePlay = useCallback((e) => {
     e?.stopPropagation();
@@ -208,12 +211,8 @@ const DevotionalMusicFab = () => {
       // Audio is playing -> STOP IT
       stopAllAudio();
     } else {
-      // Audio is paused -> START IT
+      // Audio is paused -> START IT (infinite loop)
       userPausedRef.current = false;
-      try {
-        localStorage.setItem(MUSIC_PREF_KEY, 'true');
-      } catch (_) {}
-
       audio.muted = false;
       setIsMuted(false);
       audio.volume = volume > 0 ? volume : 0.75;
