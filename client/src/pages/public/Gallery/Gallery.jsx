@@ -1,4 +1,5 @@
 import React from 'react';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const GALLERY_ITEMS = [
   {
@@ -42,17 +43,15 @@ const GALLERY_ITEMS = [
 const Gallery = () => {
   return (
     <div className="gallery-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Sacred Visuals</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Tirupati & Tirumala Photo Gallery
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            A glimpse into the divine beauty, spiritual heritage, and mountain landscapes of Lord Venkateswara's holy abode.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="SACRED VISUALS"
+        title="TIRUPATI & TIRUMALA PHOTO GALLERY"
+        subtitle="A glimpse into the divine beauty, spiritual heritage, and mountain landscapes of Lord Venkateswara's holy abode."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Gallery' },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '28px' }}>

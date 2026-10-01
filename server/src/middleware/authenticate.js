@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 export const authenticate = async (req, res, next) => {
-  const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
+  const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1] || req.query.token;
   if (!token) {
     return res.status(401).json({ success: false, message: 'Authentication required' });
   }

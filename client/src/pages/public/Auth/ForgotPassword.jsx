@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '../../../constants/routes';
 import Logo from '../../../components/common/Logo/Logo';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Auth.module.css';
 
 const ForgotPassword = () => {
@@ -20,13 +21,24 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authCard}>
-        <div className={styles.authHeader}>
-          <Logo size="md" variant="default" showWordmark />
-          <h1 className={styles.authTitle}>Reset Password</h1>
-          <p className={styles.authSubtitle}>We will send you instructions to recover your account</p>
-        </div>
+    <div>
+      <PageHeader
+        eyebrow="ACCOUNT RECOVERY"
+        title="RESET DEVOTEE PASSWORD"
+        subtitle="We will send you instructions or an OTP to recover your pilgrim account."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Login', path: ROUTES.LOGIN },
+          { label: 'Forgot Password' },
+        ]}
+      />
+      <div className={styles.authContainer} style={{ minHeight: 'auto', padding: '36px 16px 64px' }}>
+        <div className={styles.authCard}>
+          <div className={styles.authHeader}>
+            <Logo size="md" variant="default" showWordmark />
+            <h2 className={styles.authTitle}>Reset Password</h2>
+            <p className={styles.authSubtitle}>Enter your details to receive recovery link</p>
+          </div>
 
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
@@ -70,6 +82,7 @@ const ForgotPassword = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

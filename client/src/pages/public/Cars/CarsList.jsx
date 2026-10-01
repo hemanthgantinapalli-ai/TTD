@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCars } from '../../../redux/slices/carSlice';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Cars.module.css';
 
 const CarsList = () => {
@@ -32,17 +33,15 @@ const CarsList = () => {
 
   return (
     <div className="cars-page">
-      <div className={styles.pageHeader}>
-        <div className="container">
-          <span className="eyebrow">Hill-Certified Travel Fleet</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Tirupati & Tirumala Car Rentals
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '600px', margin: '8px auto 0' }}>
-            Spotlessly clean AC cabs with hill-experienced courteous drivers for airport transfers, local sightseeing, and safe Tirumala ghat road travel.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="TEMPLE TRAVEL & LOCAL TRANSPORT"
+        title="CARS & CAB SERVICES"
+        subtitle="Comfortable AC transportation for Tirupati and surrounding temple visits."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Cars' },
+        ]}
+      />
 
       <div className="container section">
         {/* Category Filter Pills */}

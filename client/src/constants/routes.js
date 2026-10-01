@@ -49,6 +49,7 @@ export const ROUTES = {
   SELECT_DATE: '/select-date',
   BOOKING_REVIEW: '/booking-review',
   PAYMENT: '/payment',
+  PAYMENT_PENDING: '/payment-pending',
   BOOKING_SUCCESS: '/booking-success',
   PAYMENT_FAILED: '/payment-failed',
   DOWNLOAD_INVOICE: (id) => `/download-invoice/${id}`,

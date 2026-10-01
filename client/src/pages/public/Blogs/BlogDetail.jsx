@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MOCK_BLOGS } from './BlogsList';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -9,19 +10,16 @@ const BlogDetail = () => {
 
   return (
     <div className="blog-detail-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '48px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container" style={{ maxWidth: '800px' }}>
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            <Link to={ROUTES.HOME} className="link-underline">Home</Link> /{' '}
-            <Link to={ROUTES.BLOGS} className="link-underline">Blogs</Link> /{' '}
-            <span style={{ color: 'var(--color-maroon-900)' }}>{blog.title}</span>
-          </div>
-
-          <span className="badge badge-gold">{blog.category}</span>
-          <h1 className="text-maroon font-display" style={{ fontSize: '30px', marginTop: '8px' }}>{blog.title}</h1>
-          <p className="text-muted" style={{ marginTop: '8px' }}>Published on {blog.date} by TTD Yatra Editorial</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={blog.category ? blog.category.toUpperCase() : 'PILGRIM GUIDE'}
+        title={blog.title}
+        subtitle={`Published on ${blog.date} by TTD Yatra Editorial Desk`}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Blogs', path: ROUTES.BLOGS },
+          { label: blog.title },
+        ]}
+      />
 
       <div className="container section" style={{ maxWidth: '840px' }}>
         <div className="card" style={{ padding: '0', overflow: 'hidden', marginBottom: '32px' }}>

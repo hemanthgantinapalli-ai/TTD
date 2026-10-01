@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { setCredentials } from '../../../redux/slices/authSlice';
 import { ROUTES } from '../../../constants/routes';
 import Logo from '../../../components/common/Logo/Logo';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Auth.module.css';
 
 const VerifyOtp = () => {
@@ -55,15 +56,26 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authCard}>
-        <div className={styles.authHeader}>
-          <Logo size="md" variant="default" showWordmark />
-          <h1 className={styles.authTitle}>Verify Mobile OTP</h1>
-          <p className={styles.authSubtitle}>
-            Enter the 6-digit code sent to <strong>+91 {phone.slice(-10)}</strong>
-          </p>
-        </div>
+    <div>
+      <PageHeader
+        eyebrow="SECURITY VERIFICATION"
+        title="VERIFY MOBILE OTP"
+        subtitle={`Enter the 6-digit code sent to +91 ${phone.slice(-10)}`}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Login', path: ROUTES.LOGIN },
+          { label: 'Verify OTP' },
+        ]}
+      />
+      <div className={styles.authContainer} style={{ minHeight: 'auto', padding: '36px 16px 64px' }}>
+        <div className={styles.authCard}>
+          <div className={styles.authHeader}>
+            <Logo size="md" variant="default" showWordmark />
+            <h2 className={styles.authTitle}>Verify Mobile OTP</h2>
+            <p className={styles.authSubtitle}>
+              Enter the 6-digit code sent to <strong>+91 {phone.slice(-10)}</strong>
+            </p>
+          </div>
 
         <form onSubmit={handleVerify} className={styles.authForm}>
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', margin: '12px 0' }}>
@@ -114,6 +126,7 @@ const VerifyOtp = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

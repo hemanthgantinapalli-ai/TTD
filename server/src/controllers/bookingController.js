@@ -1,5 +1,6 @@
 import Booking from '../models/Booking.js';
 import { logAdminAction } from '../services/auditService.js';
+import { createAndBroadcastNotification } from '../services/notificationService.js';
 
 // Public/User Booking Creation
 export const createBooking = async (req, res, next) => {
@@ -16,6 +17,7 @@ export const createBooking = async (req, res, next) => {
       leadPilgrim = {},
       paymentMethod = 'UPI',
       notes = '',
+      transactionId,
     } = req.body;
 
     const finalTravelDate = travelDate || date || new Date().toISOString().split('T')[0];
@@ -28,6 +30,7 @@ export const createBooking = async (req, res, next) => {
     const randomSuffix = Math.floor(10000 + Math.random() * 90000);
     const pnr = `TTY-${new Date().getFullYear()}-${randomSuffix}`;
     const bookingId = `bk_${Date.now()}`;
+    const resolvedTxn = transactionId || `TXN-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const booking = await Booking.create({
       bookingId,
@@ -52,9 +55,29 @@ export const createBooking = async (req, res, next) => {
         city: finalCustomer.city || 'India',
       },
       paymentMethod,
-      paymentStatus: 'paid', // Initial confirmation on checkout
-      bookingStatus: 'confirmed',
+      transactionId: '',
+      paymentStatus: 'pending',
+      bookingStatus: 'payment_pending',
       notes,
+    });
+
+    // Broadcast instant real-time notification to admin that a booking was initiated
+    await createAndBroadcastNotification({
+      title: `🎟️ New Booking Created: ${pnr}`,
+      message: `Devotee ${finalCustomer.name} created booking for ${itemName} (₹${Number(amount).toLocaleString('en-IN')}) - Awaiting Payment.`,
+      type: 'booking_new',
+      category: 'Bookings',
+      priority: 'normal',
+      metadata: {
+        bookingId: booking._id.toString(),
+        pnr: booking.pnr,
+        amount: Number(amount),
+        customerName: finalCustomer.name,
+        customerPhone: finalCustomer.phone,
+        paymentMethod,
+        itemName,
+      },
+      link: '/admin/bookings',
     });
 
     return res.status(201).json({

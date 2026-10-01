@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MOCK_DARSHAN_GUIDES } from '../../../data/mockData';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const DarshanGuide = () => {
   const [selectedAudience, setSelectedAudience] = useState('men');
 
   return (
     <div className="darshan-guide-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '48px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Official Protocols & Devotee Advisory</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Tirumala Darshan & Pilgrim Guide
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Essential dress codes, darshan quota booking rules, laddu prasadam collection, tonsure (kalyanakatta), and special senior citizen entry steps.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="OFFICIAL PROTOCOLS & DEVOTEE ADVISORY"
+        title="TIRUMALA DARSHAN & PILGRIM GUIDE"
+        subtitle="Essential dress codes, darshan quota booking rules, laddu prasadam collection, and special senior citizen entry steps."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Darshan Guide' },
+        ]}
+      />
 
       <div className="container section">
         {/* Interactive Dress Code Checker */}

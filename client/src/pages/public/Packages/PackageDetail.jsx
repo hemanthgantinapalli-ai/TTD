@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPackageBySlug } from '../../../redux/slices/packageSlice';
 import { ROUTES } from '../../../constants/routes';
 import { startBooking } from '../../../redux/slices/bookingSlice';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Packages.module.css';
 
 const PackageDetail = () => {
@@ -37,19 +38,16 @@ const PackageDetail = () => {
   }
   return (
     <div className="package-detail-page">
-      <div className={styles.pageHeader}>
-        <div className="container">
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            <Link to={ROUTES.HOME} className="link-underline">Home</Link> /{' '}
-            <Link to={ROUTES.PACKAGES} className="link-underline">Packages</Link> /{' '}
-            <span style={{ color: 'var(--color-maroon-900)' }}>{pkg.title}</span>
-          </div>
-
-          <span className="badge badge-gold">{pkg.badge}</span>
-          <h1 className="text-maroon font-display" style={{ fontSize: '30px', marginTop: '8px' }}>{pkg.title}</h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>{pkg.tagline}</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={pkg.badge ? pkg.badge.toUpperCase() : (pkg.category ? pkg.category.toUpperCase() : 'PILGRIMAGE PACKAGE')}
+        title={pkg.title}
+        subtitle={pkg.tagline}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Packages', path: ROUTES.PACKAGES },
+          { label: pkg.title },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px' }}>

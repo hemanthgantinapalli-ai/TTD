@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCarBySlug } from '../../../redux/slices/carSlice';
 import { ROUTES } from '../../../constants/routes';
 import { startBooking, setSelectedVehicle } from '../../../redux/slices/bookingSlice';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Cars.module.css';
 
 const CarDetail = () => {
@@ -41,21 +42,16 @@ const CarDetail = () => {
 
   return (
     <div className="car-detail-page">
-      <div className={styles.pageHeader}>
-        <div className="container">
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            <Link to={ROUTES.HOME} className="link-underline">Home</Link> /{' '}
-            <Link to={ROUTES.CARS} className="link-underline">Cars</Link> /{' '}
-            <span style={{ color: 'var(--color-maroon-900)' }}>{car.name}</span>
-          </div>
-
-          <span className="badge badge-maroon">{car.category}</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>{car.name}</h1>
-          <p className="text-muted" style={{ maxWidth: '600px', margin: '8px auto 0' }}>
-            {car.capacity} Capacity • Ghat-Road Certified Local Driver • 24/7 Available
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={car.category ? car.category.toUpperCase() : 'PILGRIM CAB SERVICE'}
+        title={car.name}
+        subtitle={`${car.capacity || '6'} Capacity • Ghat-Road Certified Local Driver • 24/7 Available`}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Cars', path: ROUTES.CARS },
+          { label: car.name },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px' }}>

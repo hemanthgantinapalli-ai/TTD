@@ -58,6 +58,43 @@ const AdminBookings = () => {
     }
   };
 
+  const handleVerifyPayment = async (booking) => {
+    if (!window.confirm(`Approve and verify payment for ${booking.pnr} (₹${booking.amount?.toLocaleString('en-IN')})? This will confirm the booking.`)) {
+      return;
+    }
+    try {
+      const res = await adminService.getPayments({ search: booking.pnr });
+      const p = res?.data?.[0];
+      if (p) {
+        await adminService.approvePayment(p.paymentId || p._id);
+      } else {
+        await adminService.updateBookingStatus(booking.bookingId || booking._id, 'confirmed');
+      }
+      toast.success(`Payment verified and booking ${booking.pnr} confirmed!`);
+      fetchBookings();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to verify payment');
+    }
+  };
+
+  const handleRejectBookingPayment = async (booking) => {
+    const reason = window.prompt(`Enter reason for rejecting payment for ${booking.pnr}:`, 'UTR not found in bank statement');
+    if (!reason) return;
+    try {
+      const res = await adminService.getPayments({ search: booking.pnr });
+      const p = res?.data?.[0];
+      if (p) {
+        await adminService.rejectPayment(p.paymentId || p._id, reason);
+      } else {
+        await adminService.updateBookingStatus(booking.bookingId || booking._id, 'pending', reason);
+      }
+      toast.success(`Payment rejected for ${booking.pnr}. Devotee can retry.`);
+      fetchBookings();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to reject payment');
+    }
+  };
+
   const handleDelete = async (bookingId) => {
     if (window.confirm('Are you sure you want to permanently cancel and remove this booking?')) {
       try {
@@ -220,124 +257,192 @@ const AdminBookings = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
             <thead>
               <tr style={{ background: '#FAF0F2', borderBottom: '2px solid #E0D4C0', textAlign: 'left' }}>
-                <th style={{ padding: '14px 16px' }}>PNR / ID</th>
-                <th style={{ padding: '14px 16px' }}>Lead Devotee</th>
-                <th style={{ padding: '14px 16px' }}>Type & Service</th>
-                <th style={{ padding: '14px 16px' }}>Date</th>
+                <th style={{ padding: '14px 16px' }}>Booking ID (PNR)</th>
+                <th style={{ padding: '14px 16px' }}>Customer</th>
+                <th style={{ padding: '14px 16px' }}>Package / Stay</th>
                 <th style={{ padding: '14px 16px' }}>Amount</th>
-                <th style={{ padding: '14px 16px' }}>Status</th>
+                <th style={{ padding: '14px 16px' }}>Payment Status</th>
+                <th style={{ padding: '14px 16px' }}>Booking Status</th>
+                <th style={{ padding: '14px 16px' }}>Method & UTR</th>
                 <th style={{ padding: '14px 16px', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {bookings.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#6B615C' }}>
+                  <td colSpan={8} style={{ padding: '40px', textAlign: 'center', color: '#6B615C' }}>
                     No bookings found matching current filters.
                   </td>
                 </tr>
               ) : (
-                bookings.map((b) => (
-                  <tr key={b.bookingId} style={{ borderBottom: '1px solid #EDE6D9' }}>
-                    <td style={{ padding: '14px 16px', fontWeight: 700, color: '#4A0E1C' }}>
-                      {b.pnr}
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <div style={{ fontWeight: 600 }}>{b.leadPilgrim?.name || 'Devotee'}</div>
-                      <div style={{ fontSize: '11px', color: '#6B615C' }}>{b.leadPilgrim?.phone} • {b.leadPilgrim?.city}</div>
-                    </td>
-                    <td style={{ padding: '14px 16px', maxWidth: '280px' }}>
-                      <span
-                        style={{
-                          fontSize: '10px',
-                          textTransform: 'uppercase',
-                          background: '#F8F2E4',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          marginRight: '6px',
-                          fontWeight: 700,
-                          color: '#8C6B10',
-                        }}
-                      >
-                        {b.type}
-                      </span>
-                      <span style={{ fontWeight: 500 }}>{b.itemName}</span>
-                      <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '2px' }}>
-                        👥 {b.travellers || 1} Travellers
-                      </div>
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>{b.date}</td>
-                    <td style={{ padding: '14px 16px', fontWeight: 700, color: '#2B2320' }}>
-                      ₹{b.amount?.toLocaleString('en-IN')}
-                    </td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <select
-                        value={b.status}
-                        onChange={(e) => handleStatusChange(b.bookingId, e.target.value)}
-                        style={{
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          border: '1px solid #D8CBB8',
-                          background:
-                            b.status === 'Confirmed'
-                              ? '#EBF5EF'
-                              : b.status === 'Pending'
-                              ? '#FFF8E6'
-                              : b.status === 'Completed'
-                              ? '#EBF1FB'
-                              : '#FDECEA',
-                          color:
-                            b.status === 'Confirmed'
-                              ? '#2E7D46'
-                              : b.status === 'Pending'
-                              ? '#B97A00'
-                              : b.status === 'Completed'
-                              ? '#1E5AA8'
-                              : '#B3261E',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </select>
-                    </td>
-                    <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                        <button
-                          onClick={() => setSelectedBooking(b)}
+                bookings.map((b) => {
+                  const isVerificationPending = b.paymentStatus === 'verification_pending' || (b.transactionId && b.bookingStatus === 'payment_pending');
+                  const isConfirmed = b.bookingStatus === 'confirmed';
+
+                  return (
+                    <tr key={b.bookingId || b._id} style={{ borderBottom: '1px solid #EDE6D9', background: isVerificationPending ? '#FFFCF5' : '#FFFFFF' }}>
+                      {/* Booking ID */}
+                      <td style={{ padding: '14px 16px', fontWeight: 700, color: '#4A0E1C' }}>
+                        <div>{b.pnr}</div>
+                        <div style={{ fontSize: '11px', color: '#7A6E6A', fontFamily: 'monospace' }}>
+                          📅 {b.date || 'Upcoming'}
+                        </div>
+                      </td>
+
+                      {/* Customer */}
+                      <td style={{ padding: '14px 16px' }}>
+                        <div style={{ fontWeight: 600 }}>{b.leadPilgrim?.name || b.customerDetails?.name || 'Devotee'}</div>
+                        <div style={{ fontSize: '11px', color: '#6B615C' }}>
+                          {b.leadPilgrim?.phone || b.customerDetails?.phone} • {b.leadPilgrim?.city || b.customerDetails?.city || 'India'}
+                        </div>
+                      </td>
+
+                      {/* Package */}
+                      <td style={{ padding: '14px 16px', maxWidth: '240px' }}>
+                        <span
                           style={{
-                            padding: '4px 10px',
-                            fontSize: '12px',
+                            fontSize: '10px',
+                            textTransform: 'uppercase',
+                            background: '#F8F2E4',
+                            padding: '2px 6px',
                             borderRadius: '4px',
-                            border: '1px solid #D8CBB8',
-                            background: '#fff',
-                            cursor: 'pointer',
+                            marginRight: '6px',
+                            fontWeight: 700,
+                            color: '#8C6B10',
                           }}
                         >
-                          View Details
-                        </button>
-                        <button
-                          onClick={() => handleDelete(b.bookingId)}
-                          style={{
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            borderRadius: '4px',
-                            border: '1px solid #FDECEA',
-                            background: '#FDECEA',
-                            color: '#B3261E',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {b.type}
+                        </span>
+                        <span style={{ fontWeight: 500 }}>{b.itemName}</span>
+                        <div style={{ fontSize: '11px', color: '#6B615C', marginTop: '2px' }}>
+                          👥 {b.travellers || 1} Travellers
+                        </div>
+                      </td>
+
+                      {/* Amount */}
+                      <td style={{ padding: '14px 16px', fontWeight: 800, color: '#3B0A17' }}>
+                        ₹{b.amount?.toLocaleString('en-IN')}
+                      </td>
+
+                      {/* Payment Status */}
+                      <td style={{ padding: '14px 16px' }}>
+                        {b.paymentStatus === 'paid' ? (
+                          <span style={{ background: '#E8F5EE', color: '#2E7D46', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                            ✓ Paid
+                          </span>
+                        ) : b.paymentStatus === 'verification_pending' ? (
+                          <span style={{ background: '#FEF3C7', color: '#92400E', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700, border: '1px solid #F59E0B' }}>
+                            ⏳ Verification Pending
+                          </span>
+                        ) : b.paymentStatus === 'failed' ? (
+                          <span style={{ background: '#FDECEA', color: '#B3261E', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                            ✕ Failed
+                          </span>
+                        ) : (
+                          <span style={{ background: '#F3F4F6', color: '#6B7280', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                            ⏳ Pending
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Booking Status */}
+                      <td style={{ padding: '14px 16px' }}>
+                        {isConfirmed ? (
+                          <span style={{ background: '#E8F5EE', color: '#2E7D46', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                            ✓ Confirmed
+                          </span>
+                        ) : (
+                          <span style={{ background: '#FEF3C7', color: '#92400E', padding: '3px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                            Payment Pending
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Method & UTR */}
+                      <td style={{ padding: '14px 16px' }}>
+                        <div style={{ fontWeight: 600, fontSize: '12px' }}>{b.paymentMethod || 'UPI'}</div>
+                        {b.transactionId ? (
+                          <div style={{ fontSize: '10.5px', color: '#2E7D46', fontFamily: 'monospace', fontWeight: 700, marginTop: '2px' }}>
+                            UTR: {b.transactionId}
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: '10.5px', color: '#9A8580', fontStyle: 'italic' }}>
+                            No UTR yet
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px', alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedBooking(b)}
+                            className="btn btn-outline btn-sm"
+                            style={{ padding: '4px 8px', fontSize: '11.5px' }}
+                          >
+                            View
+                          </button>
+
+                          {isVerificationPending && (
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyPayment(b)}
+                              style={{
+                                background: '#2E7D46',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '4px',
+                                padding: '4px 8px',
+                                fontSize: '11.5px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              ✓ Verify Payment
+                            </button>
+                          )}
+
+                          {isVerificationPending && (
+                            <button
+                              type="button"
+                              onClick={() => handleRejectBookingPayment(b)}
+                              style={{
+                                background: '#FDECEA',
+                                color: '#B3261E',
+                                border: '1px solid #F5C6CB',
+                                borderRadius: '4px',
+                                padding: '4px 6px',
+                                fontSize: '11.5px',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Reject
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(b.bookingId || b._id)}
+                            style={{
+                              padding: '4px 6px',
+                              fontSize: '11px',
+                              borderRadius: '4px',
+                              border: '1px solid #EDE6D9',
+                              background: '#FAF7F2',
+                              color: '#9A8580',
+                              cursor: 'pointer',
+                            }}
+                            title="Archive / Remove Booking"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -394,11 +499,19 @@ const AdminBookings = () => {
                 <div>
                   <strong style={{ color: '#4A3F3A' }}>Payment Method:</strong>
                   <div>{selectedBooking.paymentMethod}</div>
+                  {selectedBooking.transactionId && (
+                    <div style={{ fontSize: '11.5px', color: '#2E7D46', fontFamily: 'monospace', marginTop: '2px', fontWeight: 600 }}>
+                      UTR: {selectedBooking.transactionId}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <strong style={{ color: '#4A3F3A' }}>Total Amount:</strong>
                   <div style={{ fontSize: '16px', fontWeight: 800, color: '#4A0E1C' }}>
                     ₹{selectedBooking.amount?.toLocaleString('en-IN')}
+                  </div>
+                  <div style={{ fontSize: '11.5px', color: '#2E7D46', fontWeight: 600 }}>
+                    Status: Verified Paid
                   </div>
                 </div>
               </div>

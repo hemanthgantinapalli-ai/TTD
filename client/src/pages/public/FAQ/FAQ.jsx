@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MOCK_FAQS } from '../../../data/mockData';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from '../Home/Home.module.css';
 
 const FAQ = () => {
@@ -7,17 +8,15 @@ const FAQ = () => {
 
   return (
     <div className="faq-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Clear Answers for Devotees</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Frequently Asked Questions
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Everything you need to know about Tirupati & Tirumala stays, ghat transport, dress codes, luggage, and darshan procedures.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="CLEAR ANSWERS FOR DEVOTEES"
+        title="FREQUENTLY ASKED QUESTIONS"
+        subtitle="Everything you need to know about Tirupati & Tirumala stays, ghat transport, dress codes, luggage, and darshan procedures."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'FAQ' },
+        ]}
+      />
 
       <div className="container section">
         <div className={styles.faqContainer}>

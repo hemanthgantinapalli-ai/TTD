@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { APP_CONFIG } from '../../../config/appConfig';
 import contentService from '../../../services/contentService';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -43,17 +44,15 @@ const Contact = () => {
 
   return (
     <div className="contact-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">We Are Here to Assist You</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Contact TTD Yatra
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Reach out to our Tirupati travel desk for bookings, customized family itineraries, or darshan inquiries.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="GET IN TOUCH"
+        title="CONTACT TTD YATRA"
+        subtitle="We are here to help you plan your Tirupati pilgrimage."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Contact' },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px' }}>

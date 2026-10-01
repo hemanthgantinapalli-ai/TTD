@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchHotels } from '../../../redux/slices/hotelSlice';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Hotels.module.css';
 
 const HotelsList = () => {
@@ -51,18 +52,15 @@ const HotelsList = () => {
 
   return (
     <div className="hotels-page">
-      {/* Header Banner */}
-      <div className={styles.pageHeader}>
-        <div className="container">
-          <span className="eyebrow">Handpicked Pilgrim Stays</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Hotels & Stays in Tirupati & Tirumala
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '600px', margin: '8px auto 0' }}>
-            Clean hygienic rooms, 24-hr hot water, proximity to temple transit points, and pure vegetarian dining.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="COMFORTABLE STAYS"
+        title="TIRUPATI HOTELS & STAYS"
+        subtitle="Comfortable accommodation options for your pilgrimage journey."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Hotels' },
+        ]}
+      />
 
       <div className="container section">
         <div className={styles.layoutGrid}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const DEFAULT_PRIVACY = `1. Information We Collect
 We collect personal information necessary to deliver travel services, including full names, contact telephone numbers, email addresses, residential cities, and ID proof types provided during checkout or enquiry.
@@ -34,14 +35,15 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="privacy-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '48px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <h1 className="text-maroon font-display">Privacy Policy</h1>
-          <p className="text-muted" style={{ marginTop: '8px' }}>
-            Last updated: {lastUpdated} • Your privacy and personal data are strictly protected.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="LEGAL & POLICIES"
+        title="PRIVACY POLICY"
+        subtitle={`Last updated: ${lastUpdated} • Your privacy and personal data are strictly protected.`}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Privacy Policy' },
+        ]}
+      />
 
       <div className="container section">
         <div className="card" style={{ padding: '40px', maxWidth: '840px', margin: '0 auto', lineHeight: 1.8, fontSize: '14px', color: 'var(--color-neutral-800)' }}>

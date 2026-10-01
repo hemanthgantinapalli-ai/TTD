@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './DevotionalMusicFab.module.css';
 import devotionalAudioSrc from '../../../assets/audio/devotional-music.mp3';
 
-const MUSIC_PREF_KEY = 'ttdyatra_devotional_music';
+const MUSIC_PREF_KEY = 'ttdyatra_devotional_music_enabled';
 
 /* ── SVG Icons ───────────────────────────────────────────── */
 const PlayIcon = () => (
@@ -34,172 +34,257 @@ const VolumeXIcon = () => (
   </svg>
 );
 
+/* 
+ * Global Audio Singleton
+ * Prevents React StrictMode, HMR, or re-renders from creating multiple duplicate background tracks
+ */
+let sharedAudioInstance = null;
+
+function getSharedAudio() {
+  if (typeof window === 'undefined') return null;
+  if (!sharedAudioInstance) {
+    const audio = new Audio(devotionalAudioSrc || '/audio/devotional-music.mp3');
+    audio.loop = true;
+    audio.preload = 'auto';
+    audio.volume = 0.75;
+    sharedAudioInstance = audio;
+  }
+  return sharedAudioInstance;
+}
+
 const DevotionalMusicFab = () => {
-  const audioRef = useRef(null);
   const containerRef = useRef(null);
+  const userPausedRef = useRef(false);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(0.75);
 
-  /* Robust automatic playback on site open — plays infinitely */
+  /* 
+   * Stop ALL audio instances currently playing on the page
+   */
+  const stopAllAudio = useCallback(() => {
+    userPausedRef.current = true;
+    try {
+      localStorage.setItem(MUSIC_PREF_KEY, 'false');
+    } catch (_) {}
+
+    // 1. Pause shared singleton
+    if (sharedAudioInstance) {
+      try {
+        sharedAudioInstance.pause();
+      } catch (_) {}
+    }
+
+    // 2. Pause any DOM audio tags that might have been left over
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('audio').forEach((el) => {
+        try {
+          el.pause();
+        } catch (_) {}
+      });
+    }
+
+    setIsPlaying(false);
+  }, []);
+
+  /* 
+   * 1. Bind listeners to shared audio instance & sync state
+   */
   useEffect(() => {
-    const audio = audioRef.current;
+    const audio = getSharedAudio();
     if (!audio) return;
 
-    audio.volume = 0.8;
+    // Initial state sync
+    setIsPlaying(!audio.paused);
+    setIsMuted(audio.muted);
+    setVolume(audio.volume);
 
-    let autoStarted = false;
-
-    // Direct playback attempt
-    const triggerAudio = () => {
-      if (!audioRef.current || autoStarted) return;
-      audioRef.current.muted = false;
-      const p = audioRef.current.play();
-      if (p !== undefined) {
-        p.then(() => {
-          autoStarted = true;
-          setIsPlaying(true);
-          removeGestureListeners();
-        }).catch(() => {
-          // If browser blocked unmuted sound without interaction, start muted initially
-          if (audioRef.current && !autoStarted) {
-            audioRef.current.muted = true;
-            audioRef.current.play().then(() => {
-              setIsPlaying(true);
-            }).catch(() => {});
-          }
-        });
-      }
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onVolumeChange = () => {
+      setIsMuted(audio.muted);
+      setVolume(audio.volume);
     };
 
-    // Unmute on ANY user interaction anywhere on the window
-    const unmuteOnInteraction = () => {
-      if (audioRef.current) {
-        audioRef.current.muted = false;
-        audioRef.current.play().then(() => {
-          if (!autoStarted) {
-            autoStarted = true;
-            setIsPlaying(true);
-          }
-        }).catch(() => {});
-      }
-      removeGestureListeners();
-    };
-
-    const gestureEvents = [
-      'pointerdown',
-      'mousedown',
-      'click',
-      'touchstart',
-      'touchend',
-      'keydown',
-      'wheel',
-      'scroll',
-    ];
-
-    const removeGestureListeners = () => {
-      gestureEvents.forEach((ev) =>
-        window.removeEventListener(ev, unmuteOnInteraction, { capture: true })
-      );
-    };
-
-    gestureEvents.forEach((ev) =>
-      window.addEventListener(ev, unmuteOnInteraction, { capture: true, once: true })
-    );
-
-    // Trigger on mount
-    triggerAudio();
-
-    // Trigger once audio data is buffered
-    const onReady = () => triggerAudio();
-    audio.addEventListener('loadeddata', onReady, { once: true });
-    audio.addEventListener('canplay', onReady, { once: true });
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
+    audio.addEventListener('volumechange', onVolumeChange);
 
     return () => {
-      removeGestureListeners();
-      audio.removeEventListener('loadeddata', onReady);
-      audio.removeEventListener('canplay', onReady);
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
+      audio.removeEventListener('volumechange', onVolumeChange);
     };
   }, []);
 
-  /* Hover to pause: automatically pauses when user hovers over the button/bar */
-  const handleMouseEnter = useCallback(() => {
-    if (audioRef.current && !audioRef.current.paused) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    }
-  }, []);
-
-  /* Toggle Play / Pause */
-  const togglePlay = useCallback((e) => {
-    e?.stopPropagation();
-    const audio = audioRef.current;
+  /* 
+   * 2. Autoplay on mount + graceful unmuting on devotee gesture
+   */
+  useEffect(() => {
+    const audio = getSharedAudio();
     if (!audio) return;
 
-    if (isPlaying) {
+    // If devotee previously turned music off, strictly respect it
+    const savedPref = localStorage.getItem(MUSIC_PREF_KEY);
+    if (savedPref === 'false') {
+      userPausedRef.current = true;
       audio.pause();
       setIsPlaying(false);
-      try {
-        localStorage.setItem(MUSIC_PREF_KEY, 'paused');
-      } catch (_) {}
-    } else {
-      audio.muted = false;
-      audio.play().then(() => {
-        setIsPlaying(true);
-        try {
-          localStorage.setItem(MUSIC_PREF_KEY, 'playing');
-        } catch (_) {}
-      }).catch(() => {});
+      return;
     }
-  }, [isPlaying]);
 
-  /* Toggle Mute / Unmute */
-  const toggleMute = useCallback((e) => {
+    // Attempt unmuted play, fallback to muted if blocked
+    const startAudio = async () => {
+      if (userPausedRef.current) return;
+
+      try {
+        audio.muted = false;
+        await audio.play();
+        setIsPlaying(true);
+        setIsMuted(false);
+      } catch (err) {
+        // Autoplay with sound blocked -> try muted
+        try {
+          if (!userPausedRef.current) {
+            audio.muted = true;
+            await audio.play();
+            setIsPlaying(true);
+            setIsMuted(true);
+          }
+        } catch (_) {}
+      }
+    };
+
+    startAudio();
+
+    // Devotee first interaction listener: smooth unmute on first click/scroll/touch
+    const handleFirstGesture = (e) => {
+      // If user clicked inside the music control itself, ignore
+      if (containerRef.current && containerRef.current.contains(e.target)) {
+        return;
+      }
+
+      cleanupGestureListeners();
+
+      // If user paused, never resume
+      if (userPausedRef.current || localStorage.getItem(MUSIC_PREF_KEY) === 'false') {
+        return;
+      }
+
+      const currentAudio = getSharedAudio();
+      if (currentAudio && !userPausedRef.current) {
+        currentAudio.muted = false;
+        setIsMuted(false);
+        if (currentAudio.paused) {
+          currentAudio.play().catch(() => {});
+        }
+      }
+    };
+
+    const events = ['click', 'keydown', 'scroll', 'touchstart', 'pointerdown'];
+    const cleanupGestureListeners = () => {
+      events.forEach((ev) => window.removeEventListener(ev, handleFirstGesture, true));
+    };
+
+    events.forEach((ev) => window.addEventListener(ev, handleFirstGesture, true));
+
+    return () => {
+      cleanupGestureListeners();
+    };
+  }, []);
+
+  /* 
+   * 3. Toggle Play / Pause: guaranteed immediate pause
+   */
+  const togglePlay = useCallback((e) => {
     e?.stopPropagation();
-    const audio = audioRef.current;
+    e?.preventDefault();
+
+    const audio = getSharedAudio();
     if (!audio) return;
 
-    if (isMuted) {
+    if (!audio.paused) {
+      // Audio is playing -> STOP IT
+      stopAllAudio();
+    } else {
+      // Audio is paused -> START IT
+      userPausedRef.current = false;
+      try {
+        localStorage.setItem(MUSIC_PREF_KEY, 'true');
+      } catch (_) {}
+
+      audio.muted = false;
+      setIsMuted(false);
+      audio.volume = volume > 0 ? volume : 0.75;
+      audio.play().then(() => {
+        setIsPlaying(true);
+      }).catch((err) => {
+        console.warn('Playback error:', err);
+      });
+    }
+  }, [volume, stopAllAudio]);
+
+  /* 
+   * 4. Toggle Mute / Unmute
+   */
+  const toggleMute = useCallback((e) => {
+    e?.stopPropagation();
+    e?.preventDefault();
+
+    const audio = getSharedAudio();
+    if (!audio) return;
+
+    if (audio.muted) {
       audio.muted = false;
       setIsMuted(false);
     } else {
       audio.muted = true;
       setIsMuted(true);
     }
-  }, [isMuted]);
+  }, []);
+
+  /* 
+   * 5. Volume Change
+   */
+  const handleVolumeChange = useCallback((e) => {
+    e?.stopPropagation();
+    const newVol = parseFloat(e.target.value);
+    setVolume(newVol);
+
+    const audio = getSharedAudio();
+    if (audio) {
+      audio.volume = newVol;
+      if (newVol > 0 && audio.muted) {
+        audio.muted = false;
+        setIsMuted(false);
+      }
+    }
+  }, []);
 
   return (
     <div
-      className={styles.smallSlideBar}
       ref={containerRef}
-      onMouseEnter={handleMouseEnter}
-      aria-label="Devotional Music Small Slide Bar"
+      className={styles.smallSlideBar}
+      aria-label="Devotional Music Background Player"
     >
-      {/* Background Audio with infinite loop */}
-      <audio
-        ref={audioRef}
-        src={devotionalAudioSrc || '/audio/om-namo-venkatesaya.mp3'}
-        loop
-        preload="auto"
-        autoPlay
-        onError={(e) => {
-          if (e.currentTarget.src.indexOf('om-namo-venkatesaya.mp3') === -1) {
-            e.currentTarget.src = '/audio/om-namo-venkatesaya.mp3';
-          }
-        }}
-      />
-
-      {/* Sleek Small Slide Bar */}
+      {/* Sleek Slide Bar Pill */}
       <div className={styles.barPill}>
-        {/* Controls that slide out on hover */}
+        {/* Controls Drawer (Reveals smoothly on hover) */}
         <div className={styles.slideDrawer}>
-          <span className={styles.songLabel}>Om Namo Venkatesaya</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className={styles.songLabel}>Om Namo Venkatesaya</span>
+            <span style={{ fontSize: '9.5px', color: '#E3C05C', letterSpacing: '0.4px', fontWeight: 600 }}>
+              Sri Venkateswara Suprabhatam
+            </span>
+          </div>
 
           {/* Pause / Play Button */}
           <button
             type="button"
             className={`${styles.ctrlBtn} ${isPlaying ? styles.btnPause : styles.btnPlay}`}
             onClick={togglePlay}
-            aria-label={isPlaying ? 'Pause music' : 'Play music'}
+            aria-label={isPlaying ? 'Pause devotional music' : 'Play devotional music'}
             title={isPlaying ? 'Pause music' : 'Play music'}
           >
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
@@ -211,22 +296,43 @@ const DevotionalMusicFab = () => {
             type="button"
             className={styles.muteBtn}
             onClick={toggleMute}
-            aria-label={isMuted ? 'Unmute' : 'Mute'}
-            title={isMuted ? 'Unmute' : 'Mute'}
+            aria-label={isMuted ? 'Unmute music' : 'Mute music'}
+            title={isMuted ? 'Unmute sound' : 'Mute sound'}
           >
             {isMuted ? <VolumeXIcon /> : <Volume2Icon />}
           </button>
+
+          {/* Volume Slider */}
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={isMuted ? 0 : volume}
+            onChange={handleVolumeChange}
+            className={styles.volumeSlider}
+            title={`Volume: ${Math.round((isMuted ? 0 : volume) * 100)}%`}
+            aria-label="Volume slider"
+          />
         </div>
 
-        {/* Tab Edge Handle (always visible on the right edge) */}
+        {/* Tab Edge Handle (always visible on screen edge) */}
         <div
           className={styles.tabHandle}
           onClick={togglePlay}
-          title={isPlaying ? 'Music Playing • Hover to Pause' : 'Music Paused • Click to Play'}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              togglePlay(e);
+            }
+          }}
+          title={isPlaying ? (isMuted ? 'Music Playing (Muted) • Click to Unmute' : 'Music Playing • Click to Pause') : 'Music Paused • Click to Play'}
         >
           <span className={styles.omGlyph}>ॐ</span>
           {/* Animated mini sound wave */}
-          <div className={`${styles.miniWaves} ${isPlaying ? styles.wavesLive : ''}`}>
+          <div className={`${styles.miniWaves} ${isPlaying && !isMuted ? styles.wavesLive : ''}`}>
             <span className={styles.wave} />
             <span className={styles.wave} />
             <span className={styles.wave} />

@@ -8,6 +8,8 @@ import { getPublicTerms, getPublicTermByType } from '../controllers/termsControl
 import { getPublicSettings } from '../controllers/settingsController.js';
 import { authenticate } from '../middleware/authenticate.js';
 
+import { getBookingPayment } from '../controllers/paymentController.js';
+
 const router = Router();
 
 // Packages
@@ -25,6 +27,7 @@ router.get('/cars/:slug', getPublicVehicleBySlug);
 // Bookings
 router.post('/bookings', createBooking);
 router.get('/bookings/my', authenticate, getMyBookings);
+router.get('/bookings/:id/payment', getBookingPayment);
 
 // Leads & Inquiries
 router.post('/leads', createLead);

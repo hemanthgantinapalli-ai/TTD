@@ -5,6 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import { logout } from '../../redux/slices/authSlice';
 import { toggleElderMode } from '../../redux/slices/uiSlice';
 import Logo from '../../components/common/Logo/Logo';
+import PageHeader from '../../components/common/PageHeader/PageHeader';
 
 const DASHBOARD_NAV = [
   { label: '🧳 My Bookings', to: ROUTES.DASHBOARD_BOOKINGS },
@@ -21,8 +22,17 @@ const DashboardLayout = () => {
   const { elderMode } = useSelector((state) => state.ui);
 
   return (
-    <div className="dashboard-page" style={{ minHeight: '90vh', background: 'var(--bg-page)', padding: '32px 0 60px' }}>
-      <div className="container">
+    <div className="dashboard-page" style={{ minHeight: '90vh', background: 'var(--bg-page)' }}>
+      <PageHeader
+        eyebrow="DEVOTEE PORTAL"
+        title="MY TRIPS & PILGRIMAGE BOOKINGS"
+        subtitle="Review and manage your confirmed yatra itineraries, hotel reservations, and download vouchers."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'My Trips' },
+        ]}
+      />
+      <div className="container" style={{ padding: '36px 16px 64px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '32px' }}>
           {/* Left Navigation Sidebar */}
           <aside className="card" style={{ padding: '24px', height: 'fit-content', background: 'var(--bg-paper)' }}>

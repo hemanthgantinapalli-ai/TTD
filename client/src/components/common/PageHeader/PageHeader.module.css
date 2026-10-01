@@ -1,0 +1,159 @@
+/* ============================================================
+   PageHeader.module.css — TTD Yatra Reusable Page Header & Breadcrumb
+   Structure:
+     Eyebrow (Gold uppercase)
+     Title (Rich Sanctum Maroon)
+     Subtitle (Muted dark brown/gray)
+     Breadcrumbs (Home / Parent / Current)
+   ============================================================ */
+
+.pageHeader {
+  background: #FCF8F5;
+  background: linear-gradient(180deg, #FBF6F0 0%, #FCF8F5 100%);
+  border-bottom: 1px solid #EAE0D5;
+  padding: 44px 20px 38px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  animation: pageHeaderFadeIn 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageHeaderFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Eyebrow ────────────────────────────────────────────── */
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #A88318;
+  margin-bottom: 8px;
+}
+
+/* ── Title ──────────────────────────────────────────────── */
+.title {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: clamp(23px, 3.8vw, 34px);
+  font-weight: 700;
+  color: #4A0E1C;
+  line-height: 1.25;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+/* ── Subtitle ───────────────────────────────────────────── */
+.subtitle {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: clamp(13px, 1.4vw, 14.5px);
+  color: #6B615C;
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto 16px;
+}
+
+/* ── Breadcrumb Container ───────────────────────────────── */
+.breadcrumbNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.breadcrumbList {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  color: #7A6E6A;
+}
+
+.breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crumbLink {
+  color: #7A6E6A;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 180ms ease;
+}
+
+.crumbLink:hover {
+  color: #A88318;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.separator {
+  color: #C4B5A5;
+  font-size: 12px;
+  user-select: none;
+}
+
+.crumbActive {
+  color: #4A0E1C;
+  font-weight: 600;
+  cursor: default;
+}
+
+/* ── Responsive Scaling ─────────────────────────────────── */
+@media (max-width: 767px) {
+  .pageHeader {
+    padding: 32px 16px 28px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
+  }
+
+  .title {
+    font-size: clamp(20px, 5.5vw, 26px);
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .breadcrumbList {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .breadcrumbItem {
+    gap: 6px;
+  }
+}

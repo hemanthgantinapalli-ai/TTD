@@ -140,6 +140,28 @@ export const adminService = {
     const res = await api.post('/admin/notifications/mark-all-read');
     return res.data;
   },
+  deleteNotification: async (id) => {
+    const res = await api.delete(`/admin/notifications/${id}`);
+    return res.data;
+  },
+
+  // Payment Verification Center (Section 8, 9, 10)
+  getPayments: async (params) => {
+    const res = await api.get('/admin/payments', { params });
+    return res.data;
+  },
+  getPaymentById: async (id) => {
+    const res = await api.get(`/admin/payments/${id}`);
+    return res.data;
+  },
+  approvePayment: async (id) => {
+    const res = await api.post(`/admin/payments/${id}/approve`);
+    return res.data;
+  },
+  rejectPayment: async (id, reason) => {
+    const res = await api.post(`/admin/payments/${id}/reject`, { reason });
+    return res.data;
+  },
 };
 
 export default adminService;

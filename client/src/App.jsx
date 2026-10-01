@@ -43,6 +43,7 @@ import TravellerDetails from './pages/booking/TravellerDetails';
 import SelectDate from './pages/booking/SelectDate';
 import BookingReview from './pages/booking/BookingReview';
 import Payment from './pages/booking/Payment';
+import PaymentPending from './pages/booking/PaymentPending';
 import BookingSuccess from './pages/booking/BookingSuccess';
 import PaymentFailed from './pages/booking/PaymentFailed';
 import DownloadInvoice from './pages/booking/DownloadInvoice';
@@ -56,6 +57,7 @@ import Support from './pages/dashboard/Support';
 // Admin Portal Pages
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminPayments from './pages/admin/AdminPayments';
 import AdminTerms from './pages/admin/AdminTerms';
 import AdminBookings from './pages/admin/AdminBookings';
 import AdminPackages from './pages/admin/AdminPackages';
@@ -121,6 +123,7 @@ function App() {
           <Route path={ROUTES.ADMIN} element={<ProtectedAdminRoute><AdminLayout /></ProtectedAdminRoute>}>
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="payments" element={<AdminPayments />} />
             <Route path="terms" element={<AdminTerms />} />
             <Route path="cms" element={<AdminTerms />} />
             <Route path="bookings" element={<AdminBookings />} />
@@ -178,6 +181,8 @@ function App() {
             <Route path={ROUTES.SELECT_DATE} element={<SelectDate />} />
             <Route path={ROUTES.BOOKING_REVIEW} element={<BookingReview />} />
             <Route path={ROUTES.PAYMENT} element={<Payment />} />
+            <Route path={ROUTES.PAYMENT_PENDING} element={<PaymentPending />} />
+            <Route path="/payment-pending/:id" element={<PaymentPending />} />
             <Route path={ROUTES.BOOKING_SUCCESS} element={<BookingSuccess />} />
             <Route path={ROUTES.PAYMENT_FAILED} element={<PaymentFailed />} />
             <Route path="/download-invoice/:id" element={<DownloadInvoice />} />

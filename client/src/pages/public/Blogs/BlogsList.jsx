@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 export const MOCK_BLOGS = [
   {
@@ -55,17 +56,15 @@ export const MOCK_BLOGS = [
 const BlogsList = () => {
   return (
     <div className="blogs-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Pilgrim Insights & Tips</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            TTD Yatra Pilgrimage Blog & Guides
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Expert articles on darshan rules, quota tips, local temples, and insider guides to Tirumala.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="PILGRIM INSIGHTS & TIPS"
+        title="TTD YATRA PILGRIMAGE BLOG"
+        subtitle="Expert articles on darshan rules, quota tips, local temples, and insider guides to Tirumala."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Blogs' },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
