@@ -230,14 +230,6 @@ const Footer = () => {
 
             <p className={styles.disclaimer}>
               {APP_CONFIG.disclaimer}
-              <a
-                href={APP_CONFIG.official_ttd_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.ttdLink}
-              >
-                Official TTD →
-              </a>
             </p>
           </div>
         </div>
