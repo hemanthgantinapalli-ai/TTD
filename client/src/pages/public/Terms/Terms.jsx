@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const DEFAULT_TERMS = `1. Acceptance of Terms
 By accessing or using the TTD Yatra platform, you agree to be bound by these Terms of Service.
@@ -39,14 +40,15 @@ const Terms = () => {
 
   return (
     <div className="terms-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '48px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <h1 className="text-maroon font-display">Terms of Service</h1>
-          <p className="text-muted" style={{ marginTop: '8px' }}>
-            Last updated: {termsData.lastUpdated || 'September 2026'}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="LEGAL & POLICIES"
+        title="TERMS OF SERVICE"
+        subtitle={`Last updated: ${termsData.lastUpdated || 'September 2026'}`}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Terms' },
+        ]}
+      />
 
       <div className="container section">
         <div className="card" style={{ padding: '40px', maxWidth: '840px', margin: '0 auto', lineHeight: 1.8, fontSize: '14px', color: 'var(--color-neutral-800)' }}>

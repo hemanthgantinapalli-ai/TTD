@@ -1,21 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const Services = () => {
   return (
     <div className="services-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Complete Pilgrimage Solutions</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Our Pilgrimage Services
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Every component of your Tirumala-Tirupati yatra organized with reverence, punctuality, and comfort.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="COMPLETE PILGRIMAGE SOLUTIONS"
+        title="OUR PILGRIMAGE SERVICES"
+        subtitle="Every component of your Tirumala-Tirupati yatra organized with reverence, punctuality, and comfort."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Services' },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>

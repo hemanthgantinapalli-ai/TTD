@@ -2,22 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import { APP_CONFIG } from '../../../config/appConfig';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './TripAssistance.module.css';
 
 const TripAssistance = () => {
   return (
     <div className="trip-assistance-page">
-      <div className={styles.headerSection}>
-        <div className="container">
-          <span className="eyebrow">End-to-End Pilgrimage Concierge</span>
-          <h1 className={`font-display ${styles.title}`}>
-            Personalized Tirumala Trip Assistance
-          </h1>
-          <p className={styles.subtitle}>
-            Let our local coordinators handle your stay, vehicle, pickup, queue timing and yatra itinerary seamlessly.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="END-TO-END PILGRIMAGE CONCIERGE"
+        title="PERSONALIZED TIRUMALA TRIP ASSISTANCE"
+        subtitle="Let our local coordinators handle your stay, vehicle, pickup, queue timing, and yatra itinerary seamlessly."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Trip Assistance' },
+        ]}
+      />
 
       <div className="container section">
         <div className={styles.featuresGrid}>

@@ -2,21 +2,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants/routes';
 import { APP_CONFIG } from '../../../config/appConfig';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 
 const About = () => {
   return (
     <div className="about-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '56px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Our Sacred Purpose</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            About TTD Yatra
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Devotion first. Dedicated to ensuring every devotee experiences a peaceful, unhurried pilgrimage to Lord Venkateswara.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="ABOUT TTD YATRA"
+        title="YOUR PILGRIMAGE JOURNEY, ARRANGED WITH CARE"
+        subtitle="Learn more about our pilgrimage travel services and local support."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'About' },
+        ]}
+      />
 
       <div className="container section">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'center', marginBottom: '64px' }}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
+import PageHeader from '../../components/common/PageHeader/PageHeader';
 import styles from './Booking.module.css';
 
 const STEPS = [
@@ -12,24 +12,44 @@ const STEPS = [
   { step: 5, label: 'Voucher' },
 ];
 
+const STEP_LABELS = {
+  1: 'Traveller Details',
+  2: 'Choose Date & Slot',
+  3: 'Review Booking',
+  4: 'Payment',
+  5: 'Confirmation',
+};
+
 const BookingLayout = ({ currentStep = 1, children }) => {
-  const { currentBooking, selectedRoom, selectedVehicle } = useSelector((state) => state.booking);
+  const { currentBooking } = useSelector((state) => state.booking);
   const bookingItem = currentBooking.itemData;
+
+  const pageTitle =
+    currentBooking.type === 'hotel'
+      ? `Hotel Booking: ${bookingItem?.name || 'Hotel Stay'}`
+      : currentBooking.type === 'car'
+      ? `Cab Rental: ${bookingItem?.name || 'Cab Service'}`
+      : currentBooking.type === 'package'
+      ? `Yatra Package: ${bookingItem?.title || 'Pilgrimage Package'}`
+      : 'Tirumala Pilgrimage Booking';
 
   return (
     <div className="booking-layout">
-      {/* Header & Stepper */}
-      <div className={styles.bookingHeader}>
-        <div className="container">
-          <span className="eyebrow">Sacred Journey Reservation</span>
-          <h1 className="text-maroon font-display" style={{ fontSize: '24px', marginTop: '4px' }}>
-            {currentBooking.type === 'hotel' && `Hotel Booking: ${bookingItem?.name || 'Hotel Stay'}`}
-            {currentBooking.type === 'car' && `Cab Rental: ${bookingItem?.name || 'Cab Service'}`}
-            {currentBooking.type === 'package' && `Yatra Package: ${bookingItem?.title || 'Pilgrimage Package'}`}
-            {!currentBooking.type && 'Tirumala Pilgrimage Booking'}
-          </h1>
+      {/* Reusable PageHeader with Breadcrumbs */}
+      <PageHeader
+        eyebrow="SACRED JOURNEY RESERVATION"
+        title={pageTitle}
+        subtitle="Complete pilgrimage reservation with confirmed darshan assistance"
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Booking', path: ROUTES.PACKAGES },
+          { label: STEP_LABELS[currentStep] || 'Checkout' },
+        ]}
+      />
 
-          {/* Stepper Bar */}
+      {/* Stepper Bar */}
+      <div style={{ background: '#FFFFFF', borderBottom: '1px solid #EAE0D5', padding: '16px 0' }}>
+        <div className="container">
           <div className={styles.stepper}>
             {STEPS.map((s, idx) => {
               const isCompleted = s.step < currentStep;

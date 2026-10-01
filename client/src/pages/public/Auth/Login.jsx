@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { login } from '../../../redux/slices/authSlice';
 import { ROUTES } from '../../../constants/routes';
 import Logo from '../../../components/common/Logo/Logo';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Auth.module.css';
 
 const Login = () => {
@@ -47,13 +48,23 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authCard}>
-        <div className={styles.authHeader}>
-          <Logo size="md" variant="default" showWordmark />
-          <h1 className={styles.authTitle}>Sign In to TTD Yatra</h1>
-          <p className={styles.authSubtitle}>Access your pilgrimage bookings, itinerary & vouchers</p>
-        </div>
+    <div>
+      <PageHeader
+        eyebrow="DEVOTEE ACCESS"
+        title="SIGN IN TO TTD YATRA"
+        subtitle="Access your sacred pilgrimage bookings, trip itinerary, and darshan vouchers."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Login' },
+        ]}
+      />
+      <div className={styles.authContainer} style={{ minHeight: 'auto', padding: '36px 16px 64px' }}>
+        <div className={styles.authCard}>
+          <div className={styles.authHeader}>
+            <Logo size="md" variant="default" showWordmark />
+            <h2 className={styles.authTitle}>Sign In to TTD Yatra</h2>
+            <p className={styles.authSubtitle}>Enter your registered mobile or email to continue</p>
+          </div>
 
         {/* Tab switch */}
         <div style={{ display: 'flex', background: 'var(--color-sandal-100)', borderRadius: '8px', padding: '3px', marginBottom: '20px' }}>
@@ -182,6 +193,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

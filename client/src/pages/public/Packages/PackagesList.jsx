@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPackages } from '../../../redux/slices/packageSlice';
 import { ROUTES } from '../../../constants/routes';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import homeStyles from '../Home/Home.module.css';
 
 const PackagesList = () => {
@@ -34,17 +35,15 @@ const PackagesList = () => {
 
   return (
     <div className="packages-page">
-      <div className="section" style={{ background: 'linear-gradient(170deg, #FAF0F2 0%, #FBF7EF 100%)', padding: '48px 0', borderBottom: '1px solid var(--border-color)', textAlign: 'center' }}>
-        <div className="container">
-          <span className="eyebrow">Sacred Pilgrimage Circuits</span>
-          <h1 className="text-maroon font-display" style={{ marginTop: '8px' }}>
-            Tirupati & Tirumala Yatra Packages
-          </h1>
-          <p className="text-muted" style={{ maxWidth: '650px', margin: '8px auto 0' }}>
-            Carefully curated complete pilgrimage itineraries with AC transport, stay, darshan guidance, and local temple visits.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="SACRED PILGRIMAGE CIRCUITS"
+        title="TIRUPATI & TIRUMALA YATRA PACKAGES"
+        subtitle="Carefully curated complete pilgrimage itineraries with AC transport, stay, darshan guidance, and local temple visits."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Packages' },
+        ]}
+      />
 
       <div className="container section">
         {/* Filters */}

@@ -15,19 +15,21 @@ const NAV_ICONS = {
   cars:      (s) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><rect x="5" y="13" width="14" height="8" rx="2"/><circle cx="7.5" cy="21" r="1.5" fill="currentColor" stroke="none"/><circle cx="16.5" cy="21" r="1.5" fill="currentColor" stroke="none"/></svg>,
   users:     (s) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   leads:     (s) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+  payments:  (s) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>,
   settings:  (s) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
 };
 
 const ADMIN_LINKS = [
-  { label: 'Dashboard',         to: ROUTES.ADMIN_DASHBOARD, navIcon: 'dashboard' },
-  { label: 'Terms & Policies',  to: ROUTES.ADMIN_CMS,       navIcon: 'terms'     },
-  { label: 'Bookings Ledger',   to: ROUTES.ADMIN_BOOKINGS,  navIcon: 'bookings'  },
-  { label: 'Yatra Packages',    to: ROUTES.ADMIN_PACKAGES,  navIcon: 'packages'  },
-  { label: 'Hotels & Stays',    to: ROUTES.ADMIN_HOTELS,    navIcon: 'hotels'    },
-  { label: 'Fleet & Cabs',      to: ROUTES.ADMIN_CARS,      navIcon: 'cars'      },
-  { label: 'Devotees & Users',  to: ROUTES.ADMIN_USERS,     navIcon: 'users'     },
-  { label: 'Inquiries & Leads', to: ROUTES.ADMIN_MARKETING, navIcon: 'leads'     },
-  { label: 'Platform Settings', to: ROUTES.ADMIN_SETTINGS,  navIcon: 'settings'  },
+  { label: 'Dashboard',            to: ROUTES.ADMIN_DASHBOARD, navIcon: 'dashboard' },
+  { label: 'Payment Verification', to: ROUTES.ADMIN_PAYMENTS,  navIcon: 'payments'  },
+  { label: 'Bookings Ledger',      to: ROUTES.ADMIN_BOOKINGS,  navIcon: 'bookings'  },
+  { label: 'Terms & Policies',     to: ROUTES.ADMIN_CMS,       navIcon: 'terms'     },
+  { label: 'Yatra Packages',       to: ROUTES.ADMIN_PACKAGES,  navIcon: 'packages'  },
+  { label: 'Hotels & Stays',       to: ROUTES.ADMIN_HOTELS,    navIcon: 'hotels'    },
+  { label: 'Fleet & Cabs',         to: ROUTES.ADMIN_CARS,      navIcon: 'cars'      },
+  { label: 'Devotees & Users',     to: ROUTES.ADMIN_USERS,     navIcon: 'users'     },
+  { label: 'Inquiries & Leads',    to: ROUTES.ADMIN_MARKETING, navIcon: 'leads'     },
+  { label: 'Platform Settings',    to: ROUTES.ADMIN_SETTINGS,  navIcon: 'settings'  },
 ];
 
 const AdminLayout = () => {

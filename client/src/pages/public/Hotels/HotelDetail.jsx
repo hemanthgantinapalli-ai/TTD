@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchHotelBySlug } from '../../../redux/slices/hotelSlice';
 import { ROUTES } from '../../../constants/routes';
 import { startBooking, setSelectedRoom } from '../../../redux/slices/bookingSlice';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Hotels.module.css';
 
 const HotelDetail = () => {
@@ -44,43 +45,40 @@ const HotelDetail = () => {
 
   return (
     <div className="hotel-detail-page">
-      {/* Breadcrumb & Title */}
-      <div className={styles.detailHeader}>
-        <div className="container">
-          <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-            <Link to={ROUTES.HOME} className="link-underline">Home</Link> /{' '}
-            <Link to={ROUTES.HOTELS} className="link-underline">Hotels</Link> /{' '}
-            <span style={{ color: 'var(--color-maroon-900)' }}>{hotel.name}</span>
+      <PageHeader
+        eyebrow={hotel.category ? hotel.category.toUpperCase() : 'COMFORTABLE STAY'}
+        title={hotel.name}
+        subtitle={hotel.address ? `📍 ${hotel.address}` : 'Comfortable pilgrim accommodation in Tirupati'}
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Hotels', path: ROUTES.HOTELS },
+          { label: hotel.name },
+        ]}
+      />
+
+      <div className="container section">
+        {/* Hotel Meta Badges & Pricing Summary Bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #EAE0D5' }}>
+          <div className="flex items-center gap-2" style={{ flexWrap: 'wrap' }}>
+            <span className="badge badge-maroon">{hotel.category}</span>
+            {hotel.vegOnly && <span className="badge badge-success">🌿 100% Pure Veg</span>}
+            <span style={{ color: 'var(--color-gold-700)', fontWeight: 600, fontSize: '14px' }}>
+              ★ {hotel.reviewRating} ({hotel.reviewCount} devotee reviews)
+            </span>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
-                <span className="badge badge-maroon">{hotel.category}</span>
-                {hotel.vegOnly && <span className="badge badge-success">🌿 100% Pure Veg</span>}
-                <span style={{ color: 'var(--color-gold-700)', fontWeight: 600, fontSize: '14px' }}>
-                  ★ {hotel.reviewRating} ({hotel.reviewCount} devotee reviews)
-                </span>
-              </div>
-              <h1 className="text-maroon font-display" style={{ fontSize: '28px' }}>{hotel.name}</h1>
-              <p className="text-muted" style={{ fontSize: '14px', marginTop: '4px' }}>📍 {hotel.address}</p>
-            </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <span style={{ fontSize: '12px', color: 'var(--color-neutral-400)', textTransform: 'uppercase' }}>
-                Starting price
-              </span>
-              <div className="flex items-center gap-2">
-                <span className="price" style={{ fontSize: '28px' }}>₹{hotel.pricePerNight.toLocaleString('en-IN')}</span>
-                <span className="price-original">₹{hotel.originalPrice.toLocaleString('en-IN')}</span>
-              </div>
-              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>per night (excl. taxes)</span>
+          <div style={{ textAlign: 'right' }}>
+            <span style={{ fontSize: '11px', color: 'var(--color-neutral-400)', textTransform: 'uppercase', display: 'block' }}>
+              Starting price
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="price" style={{ fontSize: '24px' }}>₹{hotel.pricePerNight?.toLocaleString('en-IN')}</span>
+              {hotel.originalPrice && <span className="price-original">₹{hotel.originalPrice?.toLocaleString('en-IN')}</span>}
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>/ night</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="container section">
         {/* Photo Gallery */}
         <div className={styles.galleryGrid}>
           <img src={hotel.images[0] || hotel.thumbnail} alt={hotel.name} className={styles.galleryMain} />

@@ -6,6 +6,7 @@ import { setCredentials } from '../../../redux/slices/authSlice';
 import authService from '../../../services/authService';
 import { ROUTES } from '../../../constants/routes';
 import Logo from '../../../components/common/Logo/Logo';
+import PageHeader from '../../../components/common/PageHeader/PageHeader';
 import styles from './Auth.module.css';
 
 const Register = () => {
@@ -83,15 +84,25 @@ const Register = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authCard}>
-        <div className={styles.authHeader}>
-          <Logo size="md" variant="default" showWordmark />
-          <h1 className={styles.authTitle}>Create Devotee Account</h1>
-          <p className={styles.authSubtitle}>Register for seamless Tirupati pilgrimage bookings</p>
-        </div>
+    <div>
+      <PageHeader
+        eyebrow="DEVOTEE REGISTRATION"
+        title="CREATE DEVOTEE ACCOUNT"
+        subtitle="Register for seamless Tirupati pilgrimage bookings, darshan guides, and exclusive devotee privileges."
+        breadcrumbs={[
+          { label: 'Home', path: '/' },
+          { label: 'Register' },
+        ]}
+      />
+      <div className={styles.authContainer} style={{ minHeight: 'auto', padding: '36px 16px 64px' }}>
+        <div className={styles.authCard}>
+          <div className={styles.authHeader}>
+            <Logo size="md" variant="default" showWordmark />
+            <h2 className={styles.authTitle}>Create Devotee Account</h2>
+            <p className={styles.authSubtitle}>Register for seamless Tirupati pilgrimage bookings</p>
+          </div>
 
-        <form onSubmit={handleRegister} className={styles.authForm}>
+          <form onSubmit={handleRegister} className={styles.authForm}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-neutral-700)', display: 'block', marginBottom: '6px' }}>
               Full Name *
@@ -222,6 +233,7 @@ const Register = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

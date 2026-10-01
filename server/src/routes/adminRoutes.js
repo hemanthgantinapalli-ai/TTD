@@ -3,8 +3,15 @@ import { authenticate, requireAdmin } from '../middleware/authenticate.js';
 
 import {
   getAdminOverview,
-  getAdminNotifications,
 } from '../controllers/adminOverviewController.js';
+
+import {
+  streamNotifications,
+  getAdminNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  deleteNotification,
+} from '../controllers/notificationController.js';
 
 import {
   adminGetAllPackages,
@@ -57,6 +64,13 @@ import {
 } from '../controllers/termsController.js';
 
 import {
+  adminGetPayments,
+  adminGetPaymentById,
+  adminApprovePayment,
+  adminRejectPayment,
+} from '../controllers/paymentController.js';
+
+import {
   adminGetSettings,
   adminUpdateSettings,
 } from '../controllers/settingsController.js';
@@ -72,10 +86,20 @@ router.use(authenticate, requireAdmin);
 
 // Overview & Telemetry
 router.get('/overview', getAdminOverview);
+
+// Real-Time Notification System (SSE Stream + CRUD)
+router.get('/notifications/stream', streamNotifications);
 router.get('/notifications', getAdminNotifications);
-router.post('/notifications/:id/read', (req, res) => res.json({ success: true }));
-router.post('/notifications/mark-all-read', (req, res) => res.json({ success: true }));
+router.post('/notifications/:id/read', markNotificationRead);
+router.post('/notifications/mark-all-read', markAllNotificationsRead);
+router.delete('/notifications/:id', deleteNotification);
 router.get('/audit-logs', adminGetAuditLogs);
+
+// Admin Payment Verification Center (Section 8, 9, 10)
+router.get('/payments', adminGetPayments);
+router.get('/payments/:id', adminGetPaymentById);
+router.post('/payments/:id/approve', adminApprovePayment);
+router.post('/payments/:id/reject', adminRejectPayment);
 
 // Packages Management
 router.get('/packages', adminGetAllPackages);
