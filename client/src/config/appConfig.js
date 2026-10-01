@@ -5,10 +5,10 @@ export const APP_CONFIG = {
   tagline: 'Sacred journeys to Tirumala, arranged with care.',
   description: 'Hotels, car rentals and end-to-end trip assistance for your Tirumala–Tirupati pilgrimage. We handle the details so you can focus on the darshan.',
   contact: {
-    phone: '+91 86887 78104',
-    phoneRaw: '+918688778104',
-    whatsapp: 'https://wa.me/918688778104',
-    email: 'hemanthgantinapalli@gmail.com',
+    phone: '+91 8143311880',
+    phoneRaw: '+918143311880',
+    whatsapp: 'https://wa.me/918143311880',
+    email: 'Sumanthdarsi@gmail.com',
     address: 'Tirupati, Andhra Pradesh, India',
   },
   social: {
@@ -18,7 +18,7 @@ export const APP_CONFIG = {
     youtube: '#',
   },
   official_ttd_url: 'https://www.tirumala.org/',
-  disclaimer: 'TTDYATRA is an independent travel service and is not affiliated with or endorsed by Tirumala Tirupati Devasthanams (TTD).',
+  disclaimer: '',
 };
 
 export const BOOKING_HOLD_DURATION_MINUTES = 10;

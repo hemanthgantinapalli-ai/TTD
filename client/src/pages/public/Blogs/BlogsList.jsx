@@ -57,12 +57,12 @@ const BlogsList = () => {
   return (
     <div className="blogs-page">
       <PageHeader
-        eyebrow="PILGRIM INSIGHTS & TIPS"
-        title="TTD YATRA PILGRIMAGE BLOG"
-        subtitle="Expert articles on darshan rules, quota tips, local temples, and insider guides to Tirumala."
+        eyebrow="TRAVEL STORIES & GUIDES"
+        title="TTD YATRA BLOG"
+        subtitle="Helpful guides, pilgrimage tips, travel information, and Tirupati journey insights."
         breadcrumbs={[
           { label: 'Home', path: '/' },
-          { label: 'Blogs' },
+          { label: 'Blog' },
         ]}
       />
 

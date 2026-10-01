@@ -1,282 +1,265 @@
+/* ============================================================
+   Footer.module.css — TTD Yatra Clean 4-Column Warm Footer
+   Matches layout & neatness of reference screenshot:
+   - 4-column balanced grid
+   - Brand on left with social icons
+   - Clear EXPLORE, SERVICES, and CONTACT columns
+   - Clean horizontal divider
+   - Bottom bar with copyright on left and legal links on right
+   - Floating scroll-to-top button on bottom right
+   - TTD Yatra warm background #FCF8F5, maroon #4B0E1D, gold #D4A72C
+   ============================================================ */
+
 .footer {
-  background: var(--bg-cream);
-  border-top: 1px solid var(--border-color);
-}
-
-/* ── CTA Banner ───────────────────────────────────── */
-.ctaBanner {
-  background: var(--gradient-sanctum);
+  background: #FCF8F5;
+  border-top: 1px solid #EAE0D5;
+  padding: 56px 0 32px;
   position: relative;
-  overflow: hidden;
-  padding-block: 64px;
+  color: #2B2320;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.ctaWatermark {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.04);
-  pointer-events: none;
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
-.ctaWatermark svg {
-  height: 140%;
-  width: auto;
-}
-
-.ctaInner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.ctaContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  max-width: 560px;
-}
-
-.ctaTitle {
-  font-family: var(--font-heading);
-  font-size: clamp(24px, 3vw, 32px);
-  color: var(--color-white);
-  line-height: 1.2;
-}
-
-.ctaDesc {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-relaxed);
-}
-
-.ctaActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-}
-
-/* ── Main Footer ──────────────────────────────────── */
-.main {
-  padding-block: 56px;
-}
-
+/* ── 4-Column Grid ────────────────────────────────────────── */
 .grid {
   display: grid;
-  gap: 40px;
   grid-template-columns: 1fr;
+  gap: 36px 40px;
+  margin-bottom: 44px;
 }
 
 @media (min-width: 640px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 1024px) {
-  .grid { grid-template-columns: 1.4fr 1fr 1fr 1.2fr; }
+  .grid {
+    grid-template-columns: 1.5fr 1fr 1.1fr 1.25fr;
+    gap: 48px;
+  }
 }
 
-/* ── Brand Column ─────────────────────────────────── */
+/* ── Column 1: Brand ──────────────────────────────────────── */
 .brandCol {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  align-items: flex-start;
+  gap: 16px;
 }
 
-.tagline {
-  font-size: var(--text-body-sm);
-  color: var(--text-secondary);
-  line-height: var(--leading-relaxed);
-  max-width: 280px;
-}
-
-.socialLinks {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.socialLink {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  background: var(--color-sandal-200);
-  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-}
-
-.socialLink:hover {
-  background: var(--color-gold-100);
-  color: var(--color-gold-700);
-  transform: translateY(-2px);
-}
-
-/* ── Link Column ──────────────────────────────────── */
-.linkCol {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.colTitle {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-}
-
-.linkList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.footerLink {
-  font-size: var(--text-body-sm);
-  color: var(--text-secondary);
-  transition: color var(--transition-fast);
+.logoLink {
+  display: inline-flex;
   text-decoration: none;
 }
 
-.footerLink:hover { color: var(--text-primary); }
+.brandDesc {
+  font-size: 13.5px;
+  line-height: 1.68;
+  color: #5C524D;
+  margin: 0;
+  max-width: 320px;
+}
 
-/* ── Contact ──────────────────────────────────────── */
-.contactList {
+.socialRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.socialBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #EFE8E1;
+  color: #4B0E1D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 200ms ease;
+  border: 1px solid #E2D7CC;
+}
+
+.socialBtn:hover {
+  background: #4B0E1D;
+  color: #D4A72C;
+  transform: translateY(-2px);
+  border-color: #4B0E1D;
+  box-shadow: 0 4px 10px rgba(75, 14, 29, 0.2);
+}
+
+/* ── Columns 2 & 3: Nav Lists ────────────────────────────── */
+.navCol {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 16px;
+}
+
+.colHeading {
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4B0E1D;
+  margin: 0;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.footerLink {
+  font-size: 14px;
+  color: #5C524D;
+  text-decoration: none;
+  transition: color 180ms ease, transform 180ms ease;
+  display: inline-block;
+}
+
+.footerLink:hover {
+  color: #C59A27;
+  transform: translateX(2px);
+}
+
+/* ── Column 4: Contact ────────────────────────────────────── */
+.contactCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contactList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .contactItem {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2);
-  font-size: var(--text-body-sm);
-  color: var(--text-secondary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
+  gap: 10px;
+  font-size: 13.5px;
+  color: #5C524D;
+  line-height: 1.5;
 }
-
-a.contactItem:hover { color: var(--text-primary); }
 
 .contactIcon {
-  color: var(--color-gold-700);
+  color: #D4A72C;
+  margin-top: 2px;
   flex-shrink: 0;
-  margin-top: 1px;
-  display: flex;
-}
-
-/* ── Gopuram Divider ──────────────────────────────── */
-.gopuramDivider {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  color: var(--color-gold-400);
-  margin-block: var(--space-8);
 }
 
-.dividerLine {
-  flex: 1;
-  height: 1px;
-  background: var(--gradient-gold);
-  opacity: 0.35;
+.contactLink {
+  color: #5C524D;
+  text-decoration: none;
+  transition: color 180ms ease;
 }
 
-/* ── Bottom Bar ───────────────────────────────────── */
+.contactLink:hover {
+  color: #4B0E1D;
+  text-decoration: underline;
+}
+
+.contactText {
+  color: #5C524D;
+}
+
+/* ── Bottom Bar ───────────────────────────────────────────── */
 .bottomBar {
+  border-top: 1px solid #EAE0D5;
+  padding-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-.bottomMainRow {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 @media (min-width: 768px) {
-  .bottomMainRow {
+  .bottomBar {
     flex-direction: row;
   }
 }
 
 .copyright {
-  font-size: 12.5px;
-  color: var(--color-neutral-400);
+  font-size: 13px;
+  color: #7A6F68;
   margin: 0;
 }
 
-.bottomLegal {
+.legalLinks {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: 24px;
 }
 
 .legalLink {
-  font-size: 12px;
-  color: var(--color-neutral-400);
+  font-size: 13px;
+  color: #7A6F68;
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 180ms ease;
 }
 
 .legalLink:hover {
-  color: var(--color-gold-700);
-}
-
-.legalSep {
-  color: var(--color-neutral-300);
-  font-size: 10px;
-  user-select: none;
-}
-
-.adminPortalLink {
-  font-size: 12px;
-  color: var(--color-gold-700);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.adminPortalLink:hover {
-  color: var(--color-gold-600);
+  color: #4B0E1D;
   text-decoration: underline;
 }
 
-.disclaimer {
-  font-size: 11px;
-  color: var(--color-neutral-400);
-  line-height: 1.6;
-  text-align: center;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  padding-top: var(--space-3);
-  margin: 0;
+/* ── Scroll to Top Button (Bottom-Right, Reference Match) ── */
+.scrollTopBtn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #4B0E1D;
+  color: #FFFFFF;
+  border: 1.5px solid #D4A72C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(75, 14, 29, 0.35);
+  transition: all 200ms ease;
+  z-index: 99;
 }
 
-.ttdLink {
-  color: var(--color-gold-700);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color var(--transition-fast);
-  margin-left: 4px;
+.scrollTopBtn:hover {
+  background: #611326;
+  color: #D4A72C;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(75, 14, 29, 0.45);
 }
 
-.ttdLink:hover {
-  color: var(--color-gold-600);
-  text-decoration: underline;
+@media (max-width: 640px) {
+  .scrollTopBtn {
+    bottom: 74px; /* Avoid collision with mobile bottom nav bar */
+    right: 16px;
+    width: 38px;
+    height: 38px;
+  }
 }

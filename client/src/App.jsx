@@ -152,7 +152,9 @@ function App() {
             <Route path={ROUTES.REFUND_POLICY} element={<RefundPolicy />} />
 
             {/* Blogs */}
-            <Route path={ROUTES.BLOGS} element={<BlogsList />} />
+            <Route path="/blog" element={<BlogsList />} />
+            <Route path="/blog/:slug" element={<BlogDetail />} />
+            <Route path="/blogs" element={<BlogsList />} />
             <Route path="/blogs/:slug" element={<BlogDetail />} />
 
             {/* Hotels */}

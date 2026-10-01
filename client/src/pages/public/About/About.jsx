@@ -13,7 +13,7 @@ const About = () => {
         subtitle="Learn more about our pilgrimage travel services and local support."
         breadcrumbs={[
           { label: 'Home', path: '/' },
-          { label: 'About' },
+          { label: 'About Us' },
         ]}
       />
 

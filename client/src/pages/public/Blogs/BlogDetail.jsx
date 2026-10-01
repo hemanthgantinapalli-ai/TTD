@@ -16,7 +16,7 @@ const BlogDetail = () => {
         subtitle={`Published on ${blog.date} by TTD Yatra Editorial Desk`}
         breadcrumbs={[
           { label: 'Home', path: '/' },
-          { label: 'Blogs', path: ROUTES.BLOGS },
+          { label: 'Blog', path: ROUTES.BLOG },
           { label: blog.title },
         ]}
       />
@@ -49,7 +49,7 @@ const BlogDetail = () => {
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <Link to={ROUTES.BLOGS} className="btn btn-ghost">
+          <Link to={ROUTES.BLOG} className="btn btn-ghost">
             ← Back to All Articles
           </Link>
         </div>

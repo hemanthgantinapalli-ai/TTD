@@ -34,8 +34,9 @@ export const ROUTES = {
   DARSHAN_GUIDE: '/darshan-guide',
 
   // Blogs
-  BLOGS: '/blogs',
-  BLOG_DETAIL: (slug) => `/blogs/${slug}`,
+  BLOG: '/blog',
+  BLOGS: '/blog',
+  BLOG_DETAIL: (slug) => `/blog/${slug}`,
 
   // Auth
   LOGIN: '/login',

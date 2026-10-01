@@ -84,7 +84,7 @@ const Contact = () => {
                     rel="noopener noreferrer"
                     style={{ fontSize: '16px', fontWeight: 600, color: '#25D366' }}
                   >
-                    +91 91483 91081 (Click to Chat)
+                    {APP_CONFIG.contact.phone} (Click to Chat)
                   </a>
                 </div>
               </div>
@@ -104,7 +104,7 @@ const Contact = () => {
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Office Address</div>
                   <div style={{ fontSize: '14px', color: 'var(--color-neutral-800)', fontWeight: 500 }}>
-                    Alipiri Bypass Road, Near Srinivasam Complex, Tirupati, Andhra Pradesh - 517501
+                    {APP_CONFIG.contact.address}
                   </div>
                 </div>
               </div>
