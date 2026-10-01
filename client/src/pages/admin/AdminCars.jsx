@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { adminService } from '../../services/adminService';
+import ImageInputPreview from '../../components/common/ImageInputPreview';
 
 const AdminCars = () => {
   const [cars, setCars] = useState([]);
@@ -97,6 +98,8 @@ const AdminCars = () => {
     e.preventDefault();
     const payload = {
       ...formData,
+      thumbnail: formData.thumbnail,
+      image: formData.thumbnail,
       features: formData.features.split('\n').filter(Boolean),
     };
 
@@ -373,14 +376,11 @@ const AdminCars = () => {
               </div>
 
               <div>
-                <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
-                  Thumbnail Image URL
-                </label>
-                <input
-                  type="text"
+                <ImageInputPreview
+                  label="Vehicle Photo / Thumbnail"
                   value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', fontSize: '13px', border: '1px solid #D8CBB8', borderRadius: '6px' }}
+                  onChange={(url) => setFormData({ ...formData, thumbnail: url })}
+                  helperText="Paste vehicle image URL or upload file directly."
                 />
               </div>
 

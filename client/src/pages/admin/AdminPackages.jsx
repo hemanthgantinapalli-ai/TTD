@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { adminService } from '../../services/adminService';
+import ImageInputPreview from '../../components/common/ImageInputPreview';
 
 const AdminPackages = () => {
   const [packages, setPackages] = useState([]);
@@ -91,6 +92,8 @@ const AdminPackages = () => {
     e.preventDefault();
     const payload = {
       ...formData,
+      image: formData.thumbnail,
+      thumbnail: formData.thumbnail,
       highlights: formData.highlights.split('\n').filter(Boolean),
       inclusions: formData.inclusions.split('\n').filter(Boolean),
     };
@@ -359,30 +362,24 @@ const AdminPackages = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div>
-                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
-                    Badge (e.g. Most Popular)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.badge}
-                    onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    style={{ width: '100%', padding: '8px 10px', fontSize: '13px', border: '1px solid #D8CBB8', borderRadius: '6px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
-                    Thumbnail Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.thumbnail}
-                    onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                    style={{ width: '100%', padding: '8px 10px', fontSize: '13px', border: '1px solid #D8CBB8', borderRadius: '6px' }}
-                  />
-                </div>
+              <div>
+                <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
+                  Badge (e.g. Most Popular)
+                </label>
+                <input
+                  type="text"
+                  value={formData.badge}
+                  onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
+                  style={{ width: '100%', padding: '8px 10px', fontSize: '13px', border: '1px solid #D8CBB8', borderRadius: '6px' }}
+                />
               </div>
+
+              <ImageInputPreview
+                label="Package Cover Image / Thumbnail"
+                value={formData.thumbnail}
+                onChange={(url) => setFormData({ ...formData, thumbnail: url })}
+                helperText="Paste an image URL (Unsplash, Cloudinary, etc.) or click Upload to select an image from your device."
+              />
 
               <div>
                 <label style={{ fontSize: '12.5px', fontWeight: 600, color: '#4A3F3A', display: 'block', marginBottom: '4px' }}>
