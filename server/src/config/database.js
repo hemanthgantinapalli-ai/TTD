@@ -1,10 +1,12 @@
 import mongoose from 'mongoose';
 
+const DEFAULT_MONGO_URI = 'mongodb+srv://hemanthgantinapalli_db_user:HAzVE1OYaseF9WGc@cluster0.ymnaaho.mongodb.net/ttdyatra?retryWrites=true&w=majority&appName=Cluster0';
+
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ttdyatra';
+    const mongoUri = process.env.MONGO_URI || DEFAULT_MONGO_URI;
     const conn = await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 8000,
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return true;
