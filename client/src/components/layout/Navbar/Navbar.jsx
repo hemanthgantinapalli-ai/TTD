@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Logo from '../../common/Logo/Logo';
 import { ROUTES } from '../../../constants/routes';
+import { APP_CONFIG } from '../../../config/appConfig';
 import { clearCredentials, logout } from '../../../redux/slices/authSlice';
 import styles from './Navbar.module.css';
 
