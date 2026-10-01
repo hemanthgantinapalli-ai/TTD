@@ -16,15 +16,27 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (e.g. mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
+
+    const configuredOrigins = (process.env.FRONTEND_URL || '')
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean);
+
     const allowed = [
-      process.env.FRONTEND_URL || 'http://localhost:5173',
+      ...configuredOrigins,
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5175',
       'http://localhost:4173',
+      'https://ttd-sable.vercel.app',
     ];
-    if (allowed.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS: origin ${origin} not allowed`));
+
+    const isVercelDomain = /^https:\/\/[a-z0-9-]+(\.vercel\.app)$/i.test(origin);
+
+    if (allowed.includes(origin) || isVercelDomain) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
 }));
