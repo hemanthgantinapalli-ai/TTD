@@ -60,11 +60,10 @@ app.use((req, res, next) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error in request:', err);
   res.status(err.status || 500).json({
     status: 'error',
-    message: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : (err.message || 'Internal Server Error'),
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    message: err.message || 'Internal Server Error',
   });
 });
 
