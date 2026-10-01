@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MOCK_PACKAGES, MOCK_HOTELS } from '../../data/mockData';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPackages } from '../../redux/slices/packageSlice';
+import { fetchHotels } from '../../redux/slices/hotelSlice';
 import { ROUTES } from '../../constants/routes';
 
 const Wishlist = () => {
-  const savedHotels = MOCK_HOTELS.slice(0, 2);
-  const savedPackages = MOCK_PACKAGES.slice(0, 1);
+  const dispatch = useDispatch();
+  const { packages } = useSelector((state) => state.package);
+  const { hotels } = useSelector((state) => state.hotel);
+
+  useEffect(() => {
+    if (!packages.length) dispatch(fetchPackages());
+    if (!hotels.length) dispatch(fetchHotels());
+  }, [dispatch, packages.length, hotels.length]);
+
+  const savedPackages = packages.slice(0, 2);
+  const savedHotels = hotels.slice(0, 2);
 
   return (
     <div className="card" style={{ padding: '32px' }}>
@@ -20,7 +31,7 @@ const Wishlist = () => {
             Saved Pilgrimage Packages
           </h3>
           {savedPackages.map((pkg) => (
-            <div key={pkg.id} className="card" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-sandal-100)', marginBottom: '12px' }}>
+            <div key={pkg._id || pkg.id || pkg.slug} className="card" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-sandal-100)', marginBottom: '12px' }}>
               <div>
                 <strong style={{ fontSize: '16px', color: 'var(--color-maroon-900)' }}>{pkg.title}</strong>
                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{pkg.duration} • ₹{pkg.startingPrice}</div>
@@ -37,7 +48,7 @@ const Wishlist = () => {
             Saved Hotels
           </h3>
           {savedHotels.map((hotel) => (
-            <div key={hotel.id} className="card" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-sandal-100)', marginBottom: '12px' }}>
+            <div key={hotel._id || hotel.id || hotel.slug} className="card" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-sandal-100)', marginBottom: '12px' }}>
               <div>
                 <strong style={{ fontSize: '16px', color: 'var(--color-maroon-900)' }}>{hotel.name}</strong>
                 <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>📍 {hotel.location} • ₹{hotel.pricePerNight} / night</div>

@@ -10,7 +10,15 @@ const contentService = {
     return response.data;
   },
   submitContact: async (formData) => {
-    const response = await api.post('/contact', formData);
+    const response = await api.post('/leads', formData);
+    return response.data;
+  },
+  getTerms: async () => {
+    const response = await api.get('/terms');
+    return response.data;
+  },
+  getSettings: async () => {
+    const response = await api.get('/settings');
     return response.data;
   },
 };

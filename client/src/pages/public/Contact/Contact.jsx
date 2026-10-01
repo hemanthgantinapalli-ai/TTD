@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { APP_CONFIG } from '../../../config/appConfig';
+import contentService from '../../../services/contentService';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,15 +13,32 @@ const Contact = () => {
     notes: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) {
       toast.error('Please provide your name and phone number');
       return;
     }
-    setIsSubmitted(true);
-    toast.success('Your pilgrimage enquiry has been submitted! Our coordinator will call you shortly.');
+    try {
+      setSubmitting(true);
+      await contentService.submitContact({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        preferredDate: formData.dates,
+        travellersCount: Number(formData.passengers) || 2,
+        message: formData.notes,
+        serviceType: 'Custom Pilgrimage Request',
+      });
+      setIsSubmitted(true);
+      toast.success('Your pilgrimage enquiry has been submitted! Our coordinator will call you shortly.');
+    } catch {
+      toast.error('Unable to submit enquiry. Please call us directly or message on WhatsApp.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -208,8 +226,13 @@ const Contact = () => {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-gold btn-lg" style={{ width: '100%', marginTop: '8px' }}>
-                    Submit Enquiry →
+                  <button
+                    type="submit"
+                    className="btn btn-gold btn-lg"
+                    style={{ width: '100%', marginTop: '8px' }}
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Submitting to Pilgrimage Desk...' : 'Submit Enquiry →'}
                   </button>
                 </form>
               )}

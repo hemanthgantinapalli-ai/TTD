@@ -5,8 +5,6 @@ import { adminService } from "../../services/adminService";
 import { ROUTES } from "../../constants/routes";
 import officialLogo from "../../assets/images/logo/ttd-yatra-logo.png";
 
-import { FALLBACK_MONTHLY_REVENUE, FALLBACK_OVERVIEW } from "../../data/adminMockData";
-
 const fmt = (n) => (n == null ? "-" : n.toLocaleString("en-IN"));
 const growthText = (n) =>
   n == null ? null : `${n >= 0 ? "+" : ""}${n.toFixed(1)}% vs last month`;
@@ -62,16 +60,24 @@ const KpiCard = ({ iconName, label, value, pctText, positive = true }) => (
 
 /* --- SVG Revenue+Bookings Chart -------------------------------------------- */
 const RevenueChart = ({ data = [] }) => {
-  const chartData = (data && data.length > 0) ? data : FALLBACK_MONTHLY_REVENUE;
-  const maxRev = Math.max(...chartData.map(d => d.revenue), 1);
-  const maxBk  = Math.max(...chartData.map(d => d.bookings), 1);
+  if (!data || !data.length) {
+    return (
+      <div style={{ height:"180px", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", color:"#8C7E78", fontSize:"13px", gap:"6px", textAlign:"center", padding:"20px" }}>
+        <Icon name="chart" size={24} />
+        <span style={{ fontWeight: 600, color: "#5A4E4A" }}>No booking or revenue trajectory data available yet in MongoDB.</span>
+        <span style={{ fontSize:"11.5px", color:"#8C7E78" }}>Confirm bookings in the Bookings Ledger to automatically plot the live revenue trajectory.</span>
+      </div>
+    );
+  }
+  const maxRev = Math.max(...data.map(d => d.revenue), 1);
+  const maxBk  = Math.max(...data.map(d => d.bookings), 1);
   const W = 520, H = 180, padL = 52, padR = 28, padB = 28, padT = 14;
   const chartW = W - padL - padR;
   const chartH = H - padB - padT;
-  const n = chartData.length;
+  const n = data.length;
   const barW = Math.floor(chartW / n * 0.44);
   const xPos = (i) => padL + (i + 0.5) * (chartW / n);
-  const linePoints = chartData.map((d, i) => xPos(i) + "," + (padT + chartH - (d.bookings / maxBk) * chartH)).join(" ");
+  const linePoints = data.map((d, i) => xPos(i) + "," + (padT + chartH - (d.bookings / maxBk) * chartH)).join(" ");
 
   return (
     <svg viewBox={"0 0 " + W + " " + H} style={{ width:"100%", height:"auto", overflow:"visible" }}>
@@ -95,7 +101,7 @@ const RevenueChart = ({ data = [] }) => {
           </g>
         );
       })}
-      {chartData.map((d, i) => {
+      {data.map((d, i) => {
         const x = xPos(i);
         const bh = (d.revenue / maxRev) * chartH;
         const y = padT + chartH - bh;
@@ -110,7 +116,7 @@ const RevenueChart = ({ data = [] }) => {
         <text key={i} x={W - padR + 5} y={padT + chartH * (1 - t) + 4} fontSize="9" fontWeight="700" fill="#B38F22">{Math.round(maxBk * t)}</text>
       ))}
       <polyline points={linePoints} fill="none" stroke="url(#lineGlow)" strokeWidth="2.5" strokeLinejoin="round" />
-      {chartData.map((d, i) => (
+      {data.map((d, i) => (
         <circle key={i} cx={xPos(i)} cy={padT + chartH - (d.bookings / maxBk) * chartH} r="4.5" fill="#D4AF37" stroke="#FFFFFF" strokeWidth="2" />
       ))}
     </svg>
@@ -200,10 +206,10 @@ const AdminDashboard = () => {
     }
   };
 
-  const stats          = (data && data.stats && data.stats.totalRevenue) ? data.stats : FALLBACK_OVERVIEW.stats;
-  const recentBookings = (data && data.recentBookings && data.recentBookings.length > 0) ? data.recentBookings : FALLBACK_OVERVIEW.recentBookings;
-  const monthlyRevenue = (data && data.monthlyRevenue && data.monthlyRevenue.length > 0) ? data.monthlyRevenue : FALLBACK_OVERVIEW.monthlyRevenue;
-  const loading        = false;
+  const stats          = data?.stats || {};
+  const recentBookings = data?.recentBookings || [];
+  const monthlyRevenue = data?.monthlyRevenue || [];
+  const loading        = !data && !overviewError;
 
   const dateStr = now.toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"short", year:"numeric" });
   const timeStr = now.toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit", hour12:true });
