@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const DEFAULT_MONGO_URI = '';
-
 let cached = global.mongoose;
 
 if (!cached) {
@@ -17,7 +15,11 @@ const connectDB = async () => {
     return true;
   }
 
-  const mongoUri = process.env.MONGO_URI || DEFAULT_MONGO_URI;
+  const mongoUri = process.env.MONGO_URI;
+
+  if (!mongoUri) {
+    throw new Error('MONGO_URI environment variable is required');
+  }
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(mongoUri, {
